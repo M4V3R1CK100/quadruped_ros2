@@ -1,6 +1,6 @@
 import flet as ft
 
-def main(page: ft.Page):
+def interface(page: ft.Page):
     page.title = "Quadruped Controller"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.window.height      = 750
@@ -211,4 +211,4 @@ def main(page: ft.Page):
 
 if __name__ == "__main__":
 
-    ft.app(target=main)
+    ft.app(target=interface)

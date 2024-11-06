@@ -12,5 +12,6 @@
         "/home/erick/quad_ws/install/quadruped_description/lib/python3.10/site-packages",
         "/opt/ros/humble/lib/python3.10/site-packages",
         "/opt/ros/humble/local/lib/python3.10/dist-packages"
-    ]
+    ],
+    "workbench.editor.enablePreview": true
 }

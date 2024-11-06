@@ -116,8 +116,10 @@ def gait(foot_number, length, current_pos): #Front foot? True or False
     
     return positions_plan
 
-def dummy_traslation(x_trasl,z_trasl,angle ,current_pos):
+
+def dummy_traslation(x_trasl, z_trasl, angle ,current_pos):
     #falta revisar la rotacion
+
     d = 0.22 #Distancia del dummy entra pata y pata
     angle = - np.pi*angle/180
     z_rotation = (d)*sin(angle)
@@ -127,7 +129,12 @@ def dummy_traslation(x_trasl,z_trasl,angle ,current_pos):
     joint_position_goal = [0,0,0,0,0,0,0,0]
     pre_position = [(0,0),(0,0),(0,0),(0,0)]
     final_position = [(0,0),(0,0),(0,0),(0,0)]
+
     for i in range(4):
+        x_rotation = abs(x_rotation)
+        z_rotation = abs(z_rotation)
+        x_trasl = abs(x_trasl)
+        z_trasl = abs(z_trasl)
         n = 2*i 
         base_new_arm = angles_new_arm(current_pos[n],current_pos[n+1])
         point_new_arm = FK(base_new_arm[0],base_new_arm[1],False)
@@ -141,9 +148,7 @@ def dummy_traslation(x_trasl,z_trasl,angle ,current_pos):
             x_rotation = -x_rotation
             z_rotation = -z_rotation
 
-            
-
-        new_point = (point_new_arm[0]+x_trasl+x_rotation, point_new_arm[1]+z_trasl+z_rotation)
+        new_point = (point_new_arm[0]+ x_trasl+ x_rotation, point_new_arm[1]+ z_trasl + z_rotation)
         final_position[i] = new_point
 
     steps = 10
@@ -156,53 +161,16 @@ def dummy_traslation(x_trasl,z_trasl,angle ,current_pos):
             m = 2*a
             x_interp = pre_position[a][0] + (final_position[a][0] - pre_position[a][0]) * (step / steps)
             z_interp = pre_position[a][1] + (final_position[a][1] - pre_position[a][1]) * (step / steps)
-            #print(x_interp,z_interp)
 
             new_angles = IK(x_interp,z_interp,False)
             angles = angles_buddy_arm(new_angles[0],new_angles[1])
             joint_position_goal[m] = angles[0]
             joint_position_goal[m+1] = angles[1]
-        
-        positions_plan.append(joint_position_goal)
+
+        positions_plan.append(joint_position_goal.copy())
     
     return positions_plan
 
-def dummy_rotation(angle,currrent_pos):
-
-    print("Rotation", angle)
-    d = 0.22 #Distancia del dummy entra pata y pata
-    angle = - np.pi*angle/180
-    z = (d)*sin(angle)
-    x = -(d)*(cos(angle)) + d
-    #z = 0.22
-    #x = 0.22
-    #FRONT
-    #print("Dummy rotation")
-    #first_position = FK(currrent_pos[0], currrent_pos[1],True)
-    #print("first position: ", first_position)
-    base_new_arm = angles_new_arm(currrent_pos[0],currrent_pos[1])
-    point_new_arm = FK(base_new_arm[0],base_new_arm[1],False)
-    new_point = (point_new_arm[0]-x, point_new_arm[1]-z)
-    print("first position new arm: ",point_new_arm)
-    print("new point: ",new_point)
-    new_angles = IK(new_point[0],new_point[1],False)
-    angles = angles_buddy_arm(new_angles[0],new_angles[1])
-    #print("Angles new arm: ",new_angles )
-    #print("Angles buddy arm: ",angles )
-
-    #BACK
-    base_new_arm_b = angles_new_arm(currrent_pos[0],currrent_pos[1])
-    point_new_arm_b = FK(base_new_arm_b[0],base_new_arm_b[1],False)
-    new_point_b = (point_new_arm_b[0]+x, point_new_arm_b[1]+z)
-    print("first position new arm: ",point_new_arm_b)
-    print("new point: ",new_point_b)
-    new_angles_b = IK(new_point_b[0],new_point_b[1],False)
-    angles_b = angles_buddy_arm(new_angles_b[0],new_angles_b[1])
-    #print("Angles buddy arm: ",angles_b )
-
-    joint_position_state=[angles[0],angles[1] ,angles[0],angles[1],angles_b[0],angles_b[1],angles_b[0],angles_b[1]] # stand up principal
-    
-    return joint_position_state
 
 # def movement(speed):
 #     #speed variara de -5 a 5

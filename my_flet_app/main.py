@@ -3,12 +3,13 @@ import flet as ft
 def main(page: ft.Page):
     page.title = "Quadruped Controller"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
-    page.window.height = 800
-    page.window.width  = 1000
-    page.auto_scroll = True
-    page.scroll = ft.ScrollMode.HIDDEN
-
-    page.window.min_width = 700
+    page.window.height      = 750
+    page.window.width       = 900
+    page.auto_scroll        = True
+    page.scroll             = ft.ScrollMode.HIDDEN
+    page.theme_mode         = "dark" 
+    page.window.min_width   = 700
+    page.window.min_height  = 700
 
     page. theme = ft. Theme(
         color_scheme_seed=ft.colors.BLUE,
@@ -25,7 +26,7 @@ def main(page: ft.Page):
     txt_z_pos    = ft.TextField(value="0.3", read_only=True, text_align=ft.TextAlign.CENTER, width=100, prefix_icon=ft.icons.SWAP_VERT)#label="Z displacement"
     txt_x_pos    = ft.TextField(value="0.0", read_only=True, text_align=ft.TextAlign.CENTER, width=100, prefix_icon=ft.icons.SWAP_HORIZ_OUTLINED)#label="X displacement"
     txt_angle    = ft.TextField(value="0°",  read_only=True, text_align=ft.TextAlign.CENTER, width=80)
-
+    title = ft.Text(value="Quadruped Controller", size=28, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_200)
 
     def minus_click_gait_vel(e):
         if not(float(txt_velocity.value.split("%")[0]) == float(-100)):
@@ -104,7 +105,10 @@ def main(page: ft.Page):
         page.snack_bar.open = True
         page.update()
 
-    title = ft.Text(value="Quadruped Controller", size=28, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_200)
+    def home_position(e):
+        page.snack_bar = ft.SnackBar(ft.Text(value=f"The information has been sent", weight=ft.FontWeight.BOLD, size=16, color=ft.colors.WHITE),bgcolor=ft.colors.GREEN_700)
+        page.snack_bar.open = True
+        page.update()
 
     movement_control = ft.Container(
         content=ft.Column(
@@ -114,7 +118,6 @@ def main(page: ft.Page):
                         ft.Text(value = "Gait velocity", size=18, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=180), 
                         ft.Text(value = "Rotation"     , size=18, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=180),
                         ft.Text(value = "Traslation"   , size=18, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=180),
-                        ft.Text(value = ""             , size=18, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=30),
                         
                     ], alignment=ft.MainAxisAlignment.SPACE_EVENLY
                 ),
@@ -171,12 +174,8 @@ def main(page: ft.Page):
                                 )
                             ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, width=200
                         ),
-                        ft.FloatingActionButton(icon=ft.icons.SEND, on_click=send_data, bgcolor=ft.colors.GREEN_700)
                     ], alignment=ft.MainAxisAlignment.SPACE_EVENLY
-                )
-                        
-                
-                        
+                )     
             ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.SPACE_EVENLY, spacing=200
         ), 
     )
@@ -189,6 +188,13 @@ def main(page: ft.Page):
                     border_radius=10, width=500, height=300, alignment=ft.Alignment(0, 0),
                     padding=20, margin=ft.margin.only(top=10),bgcolor=ft.colors.GREY_800, expand=True
             ),
+            ft.Column(
+                [
+                    ft.FloatingActionButton(icon=ft.icons.HOME_ROUNDED, on_click=home_position, bgcolor=ft.colors.BLUE, text="Home Position", width=150),
+                    ft.FloatingActionButton(icon=ft.icons.POWER_SETTINGS_NEW_OUTLINED, on_click=home_position, bgcolor=ft.colors.BLUE, text="Rest Position", width=150),
+                    ft.FloatingActionButton(icon=ft.icons.SEND, on_click=send_data, bgcolor=ft.colors.GREEN_700, text="Send Data", width=150),
+                ], width=150, height=300, horizontal_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.SPACE_AROUND, expand=True
+            )
         ], vertical_alignment=ft.CrossAxisAlignment.CENTER
     )
 

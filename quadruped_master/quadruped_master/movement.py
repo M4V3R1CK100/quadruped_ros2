@@ -20,7 +20,7 @@ class MyNode(Node):
         super().__init__("movement_node")
         self.get_logger().info("Nodo creado")
         self.joint_state_pub = self.create_publisher(JointState, 'joint_states', 10)
-        self.motion_sub = self.create_subscription(MotionParams,"motion_params", self.movement_manage)
+        self.motion_sub = self.create_subscription(MotionParams,"motion_params", self.movement_manage ,10)
         self.motion_params = MotionParams()
         self.timer = self.create_timer(0.01, self.send_joint_states)
         self.node_joint_states = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -39,16 +39,17 @@ class MyNode(Node):
             self.node_joint_states = goals
             time.sleep(time_delay)
 
-    def movement_manage(self):
-        if self.motion_params.speed != 0:
-            movement(self, self.motion_params.speed)
-        if self.motion_params.rotation !=0:
-            plan = dummy_traslation(0,0,self.motion_params.rotation,self.node_joint_states)
-            self.adjust_goals(plan,0.2)
-        if self.motion_params.traslation_z!=0 or self.motion_params.traslation_x!=0:
-            plan = dummy_traslation(self.motion_params.traslation_x, self.motion_params.traslation_z , 0,self.node_joint_states)
-            self.adjust_goals(plan,0.2)
-
+    def movement_manage(self, msg):
+        self.get_logger().info(str(msg))  # Cambié a str para asegurar compatibilidad en el mensaje de registro
+        self.motion_params = msg  # Guarda el mensaje recibido en self.motion_params para usar en el movimiento
+        # if self.motion_params.speed != 0:
+        #     movement(self, self.motion_params.speed)
+        # if self.motion_params.rotation != 0:
+        #     plan = dummy_traslation(0, 0, self.motion_params.rotation, self.node_joint_states)
+        #     self.adjust_goals(plan, 0.2)
+        # if self.motion_params.traslation_z != 0 or self.motion_params.traslation_x != 0:
+        #     plan = dummy_traslation(self.motion_params.traslation_x, self.motion_params.traslation_z, 0, self.node_joint_states)
+        #     self.adjust_goals(plan, 0.2)
 
 
 
@@ -69,7 +70,7 @@ def movement(node, speed):
 
     while speed != 0:
         print("Traslation")
-        plan = dummy_traslation(-length/2, 0, node.node_joint_states)
+        plan = dummy_traslation(-length/2, 0, 0, node.node_joint_states)
         node.adjust_goals(plan,time_delay)
 
         time.sleep(0.05)
@@ -157,7 +158,7 @@ def main(args=None):
     node = MyNode()
     
     # Crear un hilo para user_input_loop
-    user_input_loop()
+    #user_input_loop()
 
     # Ejecutar el nodo ROS
     rclpy.spin(node)

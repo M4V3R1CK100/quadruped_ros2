@@ -13,22 +13,24 @@ class my_node(Node):
 
         self.motion_params = MotionParams()
 
-        self.timer = self.create_timer(1, self.timer_callback)
+        self.timer = self.create_timer(10, self.timer_callback)
 
         self.get_logger().info("Interface Node initialized")
 
         self.motion_params.speed = 1.0  # Por ejemplo, velocidad de 1.0 m/s
         self.motion_params.rotation = 0.0  # Por ejemplo, rotación de 0.5 radianes
-        self.motion_params.traslation_x = +0.1  # Por ejemplo, traslación de 2.0 metros
-        self.motion_params.traslation_z = +0.1  # Por ejemplo, traslación de 2.0 metros
+        self.motion_params.traslation_x = 0.0  # Por ejemplo, traslación de 2.0 metros
+        self.motion_params.traslation_z = 0.0  # Por ejemplo, traslación de 2.0 metros
+        self.motion_params.motion = 0.0  # Por ejemplo, traslación de 2.0 metros
     
     def timer_callback(self):
 
         # Asignar valores a los campos de MotionParams (ajusta según la estructura del mensaje)
-        self.motion_params.speed += 1.0  # Por ejemplo, velocidad de 1.0 m/s
-        self.motion_params.rotation += 2.0  # Por ejemplo, rotación de 0.5 radianes
-        self.motion_params.traslation_x += +0.1  # Por ejemplo, traslación de 2.0 metros
-        self.motion_params.traslation_z += +0.1  # Por ejemplo, traslación de 2.0 metros
+        self.motion_params.speed = 1.0  # Por ejemplo, velocidad de 1.0 m/s
+        self.motion_params.rotation = 0.0  # Por ejemplo, rotación de 0.5 radianes
+        self.motion_params.traslation_x = 0.0  # Por ejemplo, traslación de 2.0 metros
+        self.motion_params.traslation_z = 0.0  # Por ejemplo, traslación de 2.0 metros
+        self.motion_params.motion = 0.0  # Por ejemplo, traslación de 2.0 metros
 
         # Publicar el mensaje en el tema 'motion_params'
         self.pub.publish(self.motion_params)

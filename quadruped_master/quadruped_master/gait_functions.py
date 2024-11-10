@@ -117,7 +117,7 @@ def gait(foot_number, length, current_pos): #Front foot? True or False
     return positions_plan
 
 
-def dummy_traslation(x_trasl, z_trasl, angle ,current_pos):
+def dummy_traslation(x_trasl, z_trasl, angle ,current_pos, current_rot):
     #falta revisar la rotacion
 
     d = 0.22 #Distancia del dummy entra pata y pata
@@ -125,16 +125,21 @@ def dummy_traslation(x_trasl, z_trasl, angle ,current_pos):
     z_rotation = (d)*sin(angle)
     x_rotation = -(d)*(cos(angle)) + d
 
+    trans_x = x_trasl*cos(current_rot) - z_trasl*sin(current_rot)
+    trans_z = x_trasl*sin(current_rot) + z_trasl*cos(current_rot)
+
     positions_plan = []
     joint_position_goal = [0,0,0,0,0,0,0,0]
     pre_position = [(0,0),(0,0),(0,0),(0,0)]
     final_position = [(0,0),(0,0),(0,0),(0,0)]
 
     for i in range(4):
-        x_rotation = abs(x_rotation)
-        z_rotation = abs(z_rotation)
-        x_trasl = abs(x_trasl)
-        z_trasl = abs(z_trasl)
+        
+        new_x_trasl = trans_x
+
+        new_x_rot = x_rotation
+        new_z_rot = z_rotation
+
         n = 2*i 
         base_new_arm = angles_new_arm(current_pos[n],current_pos[n+1])
         point_new_arm = FK(base_new_arm[0],base_new_arm[1],False)
@@ -142,13 +147,13 @@ def dummy_traslation(x_trasl, z_trasl, angle ,current_pos):
 
         if i >= 2:
             print("back")
-            x_trasl = -x_trasl
+            new_x_trasl = -trans_x
         else:
             print("frontal")
-            x_rotation = -x_rotation
-            z_rotation = -z_rotation
+            new_x_rot = -x_rotation
+            new_z_rot = -z_rotation
 
-        new_point = (point_new_arm[0]+ x_trasl+ x_rotation, point_new_arm[1]+ z_trasl + z_rotation)
+        new_point = (point_new_arm[0]+ new_x_trasl+ new_x_rot, point_new_arm[1]+ trans_z + new_z_rot)
         final_position[i] = new_point
 
     steps = 10

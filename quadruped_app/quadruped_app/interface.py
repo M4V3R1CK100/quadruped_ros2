@@ -15,30 +15,42 @@ class my_node(Node):
 
         self.motion_params = MotionParams()
 
-        self.timer = self.create_timer(10, self.timer_callback)
+        self.timer = self.create_timer(0.1, self.timer_callback)
 
         self.get_logger().info("Interface Node initialized")
 
-        self.motion_params.speed = 1.0  # Por ejemplo, velocidad de 1.0 m/s
-        self.motion_params.rotation = 0.0  # Por ejemplo, rotación de 0.5 radianes
-        self.motion_params.traslation_x = 0.0  # Por ejemplo, traslación de 2.0 metros
-        self.motion_params.traslation_z = 0.0  # Por ejemplo, traslación de 2.0 metros
-        self.motion_params.motion = 0.0  # Por ejemplo, traslación de 2.0 metros
+        self.speed = 0.0  # Por ejemplo, velocidad de 1.0 m/s
+        self.rotation = 0.0  # Por ejemplo, rotación de 0.5 radianes
+        self.traslation_x = 0.0  # Por ejemplo, traslación de 2.0 metros
+        self.traslation_z = 0.0  # Por ejemplo, traslación de 2.0 metros
+        self.motion = 0.0  # Por ejemplo, traslación de 2.0 metros
     
     def timer_callback(self):
 
         # Asignar valores a los campos de MotionParams (ajusta según la estructura del mensaje)
-        self.motion_params.speed = 1.0  # Por ejemplo, velocidad de 1.0 m/s
-        self.motion_params.rotation = 0.0  # Por ejemplo, rotación de 0.5 radianes
-        self.motion_params.traslation_x = 0.0  # Por ejemplo, traslación de 2.0 metros
-        self.motion_params.traslation_z = 0.0  # Por ejemplo, traslación de 2.0 metros
-        self.motion_params.motion = 0.0  # Por ejemplo, traslación de 2.0 metros
+        self.motion_params.speed = self.speed  # Por ejemplo, velocidad de 1.0 m/s
+        self.motion_params.rotation = self.rotation # Por ejemplo, rotación de 0.5 radianes
+        self.motion_params.traslation_x = self.traslation_x  # Por ejemplo, traslación de 2.0 metros
+        self.motion_params.traslation_z = self.traslation_z  # Por ejemplo, traslación de 2.0 metros
+        self.motion_params.motion = self.motion  # Por ejemplo, traslación de 2.0 metros
 
         # Publicar el mensaje en el tema 'motion_params'
         self.pub.publish(self.motion_params)
 
+    def update_params(self, speed, rotation, traslation_x, traslation_z, motion):
+        # Método para actualizar las variables del nodo
+        self.speed = speed
+        self.rotation = rotation
+        self.traslation_x = traslation_x
+        self.traslation_z = traslation_z
+        self.motion = motion
 
-def interface(page: ft.Page):
+
+def ros_spin(node):
+    # Este método se ejecutará en un hilo separado
+    rclpy.spin(node)
+
+def interface(page: ft.Page, node):
     page.title = "Quadruped Controller"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.window.height      = 750
@@ -64,8 +76,10 @@ def interface(page: ft.Page):
     txt_z_pos    = ft.TextField(value="0.3", read_only=True, text_align=ft.TextAlign.CENTER, width=100, prefix_icon=ft.icons.SWAP_VERT)#label="Z displacement"
     txt_x_pos    = ft.TextField(value="0.0", read_only=True, text_align=ft.TextAlign.CENTER, width=100, prefix_icon=ft.icons.SWAP_HORIZ_OUTLINED)#label="X displacement"
     txt_angle    = ft.TextField(value="0°",  read_only=True, text_align=ft.TextAlign.CENTER, width=80)
-    title = ft.Text(value="Quadruped Controller", size=28, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_200)
+    motion       = 0.0
 
+    title        = ft.Text(value="Quadruped Controller", size=28, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_200)
+    
     def minus_click_gait_vel(e):
         if not(float(txt_velocity.value.split("%")[0]) == float(-100)):
             txt_velocity.value = str(round(float(txt_velocity.value.split("%")[0]) - 10)) + "%"
@@ -141,6 +155,7 @@ def interface(page: ft.Page):
     def send_data(e):
         page.snack_bar = ft.SnackBar(ft.Text(value=f"The information has been sent", weight=ft.FontWeight.BOLD, size=16, color=ft.colors.WHITE),bgcolor=ft.colors.GREEN_700)
         page.snack_bar.open = True
+        node.update_params(float(txt_velocity.value.split("%")[0]), float(txt_angle.value.split("°")[0]), float(txt_x_pos.value), float(txt_z_pos.value),motion)
         page.update()
 
     def home_position(e):
@@ -247,33 +262,26 @@ def interface(page: ft.Page):
     )
 
 
-def run_flet_app():
-    ft.app(target=interface)
-
 def main():
-    # Inicializa ROS 2
+    # Inicializar rclpy antes de crear el nodo
     rclpy.init()
 
-    # Crea el nodo
-    node = my_node()
-
-    # Crea un hilo que ejecuta la función `some_task`
-    task_thread = threading.Thread(target=run_flet_app)
-    task_thread.start()
-
     try:
-        # Ejecuta el ciclo de vida del nodo, lo que permite la comunicación en ROS 2
-        rclpy.spin(node)
+        # Crear una instancia del nodo ROS2
+        node = my_node()
 
-    except KeyboardInterrupt:
-        pass
+        # Crear un hilo separado para ejecutar ros_spin
+        ros_thread = threading.Thread(target=ros_spin, args=(node,))
+        ros_thread.start()
 
+        # Iniciar la interfaz Flet
+        ft.app(target=lambda page: interface(page, node))
+
+        # Esperar a que el hilo de ROS termine (opcional)
+        ros_thread.join()
     finally:
-        # Detén el nodo y espera que termine el hilo
-        node.destroy_node()
-        task_thread.join()  # Asegúrate de que el hilo termine antes de finalizar
-
-    rclpy.shutdown()
+        # Cerrar rclpy correctamente
+        rclpy.shutdown()
 
 
 if __name__ == "__main__":

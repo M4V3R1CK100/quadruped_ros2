@@ -22,6 +22,8 @@ class MyNode(Node):
         self.joint_state_pub = self.create_publisher(JointState, 'joint_states', 10)
         self.motion_sub = self.create_subscription(MotionParams,"motion_params", self.movement_manage ,10)
         self.motion_params = MotionParams()
+        self.rotation = 0
+        self.speed = 0
         self.timer = self.create_timer(0.01, self.send_joint_states)
         self.node_joint_states = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
@@ -42,6 +44,8 @@ class MyNode(Node):
     def movement_manage(self, msg):
         self.get_logger().info(str(msg))  # Cambié a str para asegurar compatibilidad en el mensaje de registro
         self.motion_params = msg  # Guarda el mensaje recibido en self.motion_params para usar en el movimiento
+        self.speed = self.motion_params.speed
+        self.rotation = self.motion_params.rotation
         # if self.motion_params.speed != 0:
         #     movement(self, self.motion_params.speed)
         # if self.motion_params.rotation != 0:
@@ -55,6 +59,7 @@ class MyNode(Node):
 
 def movement(node, speed):
     global quit
+    node.speed = speed
     plan = []
     min_speed = 0
     max_speed = 5
@@ -70,7 +75,7 @@ def movement(node, speed):
 
     while speed != 0:
         print("Traslation")
-        plan = dummy_traslation(-length/2, 0, 0, node.node_joint_states)
+        plan = dummy_traslation(-length/2, 0, 0, node.node_joint_states, node.rotation)
         node.adjust_goals(plan,time_delay)
 
         time.sleep(0.05)
@@ -82,7 +87,7 @@ def movement(node, speed):
             plan = gait(2, length, node.node_joint_states)
             node.adjust_goals(plan,time_delay)
 
-            plan = dummy_traslation(4 * length / 2, 0, 0 , node.node_joint_states)
+            plan = dummy_traslation(4 * length / 2, 0, 0 , node.node_joint_states, node.rotation)
             node.adjust_goals(plan,time_delay)
 
             time.sleep(1)
@@ -97,7 +102,7 @@ def movement(node, speed):
             plan = gait(3, length, node.node_joint_states)
             node.adjust_goals(plan,time_delay)
 
-            plan = dummy_traslation(4 * length / 2, 0, 0, node.node_joint_states)
+            plan = dummy_traslation(4 * length / 2, 0, 0, node.node_joint_states, node.rotation)
             node.adjust_goals(plan,time_delay)
 
             time.sleep(1)
@@ -107,7 +112,7 @@ def movement(node, speed):
             plan = gait(1, length, node.node_joint_states)
             node.adjust_goals(plan,time_delay)
 
-        plan = dummy_traslation(-length/2, 0, 0,node.node_joint_states)
+        plan = dummy_traslation(-length/2, 0, 0,node.node_joint_states, node.rotation)
         node.adjust_goals(plan,time_delay)
 
 
@@ -144,7 +149,7 @@ def user_input_loop(node):
                 movement(node, velocity)  # Llama a la función de movimiento
             elif number == 4:
                 print("Translating")
-                dummy_traslation(0.1, 0, 0,node.node_joint_states)  # Ajusta según tu función de traducción
+                dummy_traslation(0.1, 0, 0,node.node_joint_states, node.rotation)  # Ajusta según tu función de traducción
             elif number == 5:
                 print("Exiting...")
                 quit = 1

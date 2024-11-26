@@ -76,7 +76,8 @@ def interface(page: ft.Page, node):
     txt_z_pos    = ft.TextField(value="0.3", read_only=True, text_align=ft.TextAlign.CENTER, width=100, prefix_icon=ft.icons.SWAP_VERT)#label="Z displacement"
     txt_x_pos    = ft.TextField(value="0.0", read_only=True, text_align=ft.TextAlign.CENTER, width=100, prefix_icon=ft.icons.SWAP_HORIZ_OUTLINED)#label="X displacement"
     txt_angle    = ft.TextField(value="0°",  read_only=True, text_align=ft.TextAlign.CENTER, width=80)
-    motion       = 0.0
+    global motion
+    motion = 0.0
 
     title        = ft.Text(value="Quadruped Controller", size=28, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_200)
     
@@ -99,7 +100,7 @@ def interface(page: ft.Page, node):
             page.update()
 
     def minus_click_z_pos(e):
-        if not(float(txt_z_pos.value) == float(0.10)): # Modificar según altura mínima permitida para el robot
+        if not(float(txt_z_pos.value) == float(-0.20)): # Modificar según altura mínima permitida para el robot
             txt_z_pos.value = str(round(float(txt_z_pos.value) - 0.05, 2))
             page.update()
         else:
@@ -108,7 +109,7 @@ def interface(page: ft.Page, node):
             page.update()
 
     def plus_click_z_pos(e):
-        if not(float(txt_z_pos.value) == float(0.40)): # Modificar según altura máxima permitida para el robot
+        if not(float(txt_z_pos.value) == float(0.20)): # Modificar según altura máxima permitida para el robot
             txt_z_pos.value = str(round(float(txt_z_pos.value) + 0.05, 2))
             page.update()
         else:
@@ -153,14 +154,18 @@ def interface(page: ft.Page, node):
             page.update()
 
     def send_data(e):
+        global motion
         page.snack_bar = ft.SnackBar(ft.Text(value=f"The information has been sent", weight=ft.FontWeight.BOLD, size=16, color=ft.colors.WHITE),bgcolor=ft.colors.GREEN_700)
         page.snack_bar.open = True
         node.update_params(float(txt_velocity.value.split("%")[0]), float(txt_angle.value.split("°")[0]), float(txt_x_pos.value), float(txt_z_pos.value),motion)
+        motion = 0.0
         page.update()
 
     def home_position(e):
+        global motion
         page.snack_bar = ft.SnackBar(ft.Text(value=f"The information has been sent", weight=ft.FontWeight.BOLD, size=16, color=ft.colors.WHITE),bgcolor=ft.colors.GREEN_700)
         page.snack_bar.open = True
+        motion = 1.0
         page.update()
 
     movement_control = ft.Container(

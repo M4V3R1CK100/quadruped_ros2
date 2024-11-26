@@ -24,38 +24,58 @@ class MyNode(Node):
         self.motion_params = MotionParams()
         self.rotation = 0
         self.speed = 0
-        self.timer = self.create_timer(0.01, self.send_joint_states)
         self.node_joint_states = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
-    def send_joint_states(self):
-        joint_state = JointState()
-        joint_state.position = self.node_joint_states
-        joint_state.header = Header()
-        joint_state.header.stamp = self.get_clock().now().to_msg()
-        joint_state.name = ['front_right_joint1', 'front_right_joint2', 'front_left_joint1', 'front_left_joint2', 
+        self.joint_state = JointState()
+        self.joint_state.position = self.node_joint_states
+        self.joint_state.header = Header()
+        self.joint_state.name = ['front_right_joint1', 'front_right_joint2', 'front_left_joint1', 'front_left_joint2', 
                             'back_left_joint1', 'back_left_joint2', 'back_right_joint1', 'back_right_joint2']
-        self.joint_state_pub.publish(joint_state)
-    
-    def adjust_goals(self,joint_goals_list,time_delay):
+
+    def send_joint_states(self, joint_goals_list,time_delay):
         for goals in joint_goals_list:
-            self.node_joint_states = goals
+            self.node_joint_states = goals   
+            print(goals)
+            self.joint_state.position = goals
+            self.joint_state.header.stamp = self.get_clock().now().to_msg()
+            self.joint_state_pub.publish(self.joint_state)
             time.sleep(time_delay)
 
+
     def movement_manage(self, msg):
-        self.get_logger().info(str(msg))  # Cambié a str para asegurar compatibilidad en el mensaje de registro
+        #self.get_logger().info(str(msg))  # Cambié a str para asegurar compatibilidad en el mensaje de registro
         self.motion_params = msg  # Guarda el mensaje recibido en self.motion_params para usar en el movimiento
         self.speed = self.motion_params.speed
         self.rotation = self.motion_params.rotation
-        # if self.motion_params.speed != 0:
-        #     movement(self, self.motion_params.speed)
-        # if self.motion_params.rotation != 0:
-        #     plan = dummy_traslation(0, 0, self.motion_params.rotation, self.node_joint_states)
-        #     self.adjust_goals(plan, 0.2)
-        # if self.motion_params.traslation_z != 0 or self.motion_params.traslation_x != 0:
-        #     plan = dummy_traslation(self.motion_params.traslation_x, self.motion_params.traslation_z, 0, self.node_joint_states)
-        #     self.adjust_goals(plan, 0.2)
+        if self.motion_params.speed != 0:
+            print("a")
+            movement(self, self.motion_params.speed)
+        if self.motion_params.rotation != 0:
+            print("b")
+            plan = dummy_traslation(0, 0, self.motion_params.rotation, self.node_joint_states, self.rotation)
+            self.send_joint_states(plan, 0.2)
+        if self.motion_params.traslation_z != 0 or self.motion_params.traslation_x != 0:
+            print("c")
+            plan = dummy_traslation(self.motion_params.traslation_x, self.motion_params.traslation_z, 0, self.node_joint_states, self.rotation)
+            self.send_joint_states(plan, 0.2)
 
+def Home(node):
+    stand_1=0.3
+    stand_2=1.4
+    # up
+    print("Home position")
+    joint_position_state=[-1,2.2,-1,2.2,-1,2.2,-1,2.2]
+    node.joints_states.position = joint_position_state
+    node.joint_state.header.stamp = node.get_clock().now().to_msg()
+    node.joint_state_pub.publish(node.joints_states)
+    node.node_joint_states = joint_position_state
 
+    time.sleep(1)
+    joint_position_state=[stand_1, stand_2,stand_1,stand_2,stand_1,stand_2,stand_1,stand_2] # stand up principal
+    node.joints_states.position = joint_position_state
+    node.joint_state.header.stamp = node.get_clock().now().to_msg()
+    node.joint_state_pub.publish(node.joints_states)
+    node.node_joint_states = joint_position_state
 
 def movement(node, speed):
     global quit
@@ -76,44 +96,44 @@ def movement(node, speed):
     while speed != 0:
         print("Traslation")
         plan = dummy_traslation(-length/2, 0, 0, node.node_joint_states, node.rotation)
-        node.adjust_goals(plan,time_delay)
+        node.send_joint_states(plan,time_delay)
 
         time.sleep(0.05)
         print("Front Gait")
         if speed > 0:  # Cuando Avanza
             plan = gait(1, length, node.node_joint_states)
-            node.adjust_goals(plan,time_delay)
+            node.send_joint_states(plan,time_delay)
 
             plan = gait(2, length, node.node_joint_states)
-            node.adjust_goals(plan,time_delay)
+            node.send_joint_states(plan,time_delay)
 
             plan = dummy_traslation(4 * length / 2, 0, 0 , node.node_joint_states, node.rotation)
-            node.adjust_goals(plan,time_delay)
+            node.send_joint_states(plan,time_delay)
 
             time.sleep(1)
             plan = gait(3, length, node.node_joint_states)
-            node.adjust_goals(plan,time_delay)
+            node.send_joint_states(plan,time_delay)
             plan = gait(4, length, node.node_joint_states)
-            node.adjust_goals(plan,time_delay)
+            node.send_joint_states(plan,time_delay)
         if speed < 0:  # Cuando retrocede
             plan = gait(4, length, node.node_joint_states)
-            node.adjust_goals(plan,time_delay)
+            node.send_joint_states(plan,time_delay)
 
             plan = gait(3, length, node.node_joint_states)
-            node.adjust_goals(plan,time_delay)
+            node.send_joint_states(plan,time_delay)
 
             plan = dummy_traslation(4 * length / 2, 0, 0, node.node_joint_states, node.rotation)
-            node.adjust_goals(plan,time_delay)
+            node.send_joint_states(plan,time_delay)
 
             time.sleep(1)
             plan = gait(2, length, node.node_joint_states)
-            node.adjust_goals(plan,time_delay)
+            node.send_joint_states(plan,time_delay)
 
             plan = gait(1, length, node.node_joint_states)
-            node.adjust_goals(plan,time_delay)
+            node.send_joint_states(plan,time_delay)
 
         plan = dummy_traslation(-length/2, 0, 0,node.node_joint_states, node.rotation)
-        node.adjust_goals(plan,time_delay)
+        node.send_joint_states(plan,time_delay)
 
 
 def user_input_loop(node):

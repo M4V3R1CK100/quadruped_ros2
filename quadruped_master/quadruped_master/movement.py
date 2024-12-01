@@ -8,8 +8,7 @@ import math
 from math import pi, cos, sin, acos, atan2
 from rclpy.node import Node
 import time
-sys.path.append('/home/erick/quad_ws/src/quadruped_master/quadruped_master')
-from gait_functions import *
+from quadruped_master.gait_functions import *
 from quadruped_interfaces.msg import MotionParams
 
 global quit
@@ -26,11 +25,13 @@ class MyNode(Node):
         self.speed = 0
         self.node_joint_states = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
-        self.joint_state = JointState()
-        self.joint_state.position = self.node_joint_states
-        self.joint_state.header = Header()
-        self.joint_state.name = ['front_right_joint1', 'front_right_joint2', 'front_left_joint1', 'front_left_joint2', 
+        self.joint_states = JointState()
+        self.joint_states.position = self.node_joint_states
+        self.joint_states.header = Header()
+        self.joint_states.name = ['front_right_joint1', 'front_right_joint2', 'front_left_joint1', 'front_left_joint2', 
                             'back_left_joint1', 'back_left_joint2', 'back_right_joint1', 'back_right_joint2']
+
+        self.get_logger().info(f"Publicador de joint_states creado: {self.joint_state_pub}")
 
     def send_joint_states(self, joint_goals_list,time_delay):
         for goals in joint_goals_list:
@@ -64,17 +65,17 @@ def Home(node):
     stand_2=1.4
     # up
     print("Home position")
-    joint_position_state=[-1,2.2,-1,2.2,-1,2.2,-1,2.2]
-    node.joints_states.position = joint_position_state
-    node.joint_state.header.stamp = node.get_clock().now().to_msg()
-    node.joint_state_pub.publish(node.joints_states)
+    joint_position_state=[-1.0, 2.2, -1.0, 2.2, -1.0, 2.2, -1.0, 2.2]
+    node.joint_states.position = joint_position_state
+    node.joint_states.header.stamp = node.get_clock().now().to_msg()
+    node.joint_state_pub.publish(node.joint_states)
     node.node_joint_states = joint_position_state
 
     time.sleep(1)
     joint_position_state=[stand_1, stand_2,stand_1,stand_2,stand_1,stand_2,stand_1,stand_2] # stand up principal
-    node.joints_states.position = joint_position_state
-    node.joint_state.header.stamp = node.get_clock().now().to_msg()
-    node.joint_state_pub.publish(node.joints_states)
+    node.joint_states.position = joint_position_state
+    node.joint_states.header.stamp = node.get_clock().now().to_msg()
+    node.joint_state_pub.publish(node.joint_states)
     node.node_joint_states = joint_position_state
 
 def movement(node, speed):
@@ -141,6 +142,8 @@ def user_input_loop(node):
     stand_1 = 0.3
     stand_2 = 1.4
 
+    Home(node)
+
     while quit == 0:
         print("\nMenu:")
         print("1. Stand")
@@ -183,7 +186,7 @@ def main(args=None):
     node = MyNode()
     
     # Crear un hilo para user_input_loop
-    #user_input_loop()
+    user_input_loop(node)
 
     # Ejecutar el nodo ROS
     rclpy.spin(node)

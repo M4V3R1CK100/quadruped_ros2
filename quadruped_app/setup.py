@@ -20,7 +20,9 @@ setup(
     maintainer_email='eridamen@espol.edu.ec',
     description='TODO: Package description',
     license='TODO: License declaration',
-    tests_require=['pytest'],
+    extras_require={
+        'test': ['pytest'],  # Dependencias para pruebas
+    },
     entry_points={
         'console_scripts': [
             'interface_node=quadruped_app.interface:main',

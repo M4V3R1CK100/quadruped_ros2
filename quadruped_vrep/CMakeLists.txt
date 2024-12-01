@@ -55,13 +55,6 @@ install(TARGETS communication
   DESTINATION lib/${PROJECT_NAME}
 )
 
-# Configuración de pruebas si están habilitadas
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
-endif()
-
 add_compile_options(-Wno-unused-variable -Wno-unused-parameter)
 
 ament_package()

@@ -23,7 +23,9 @@ setup(
     maintainer_email='erick@todo.todo',
     description='TODO: Package description',
     license='TODO: License declaration',
-    tests_require=['pytest'],
+    extras_require={
+        'test': ['pytest'],  # Dependencias para pruebas
+    },
     entry_points={
         'console_scripts': [
         ],

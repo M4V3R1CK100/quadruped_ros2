@@ -4,12 +4,6 @@
 
   <link name="dummy">
   </link>
-  
-  <joint name="dummy_joint" type="fixed">
-     <parent link="dummy"/>
-     <child link="body"/>
-  </joint>
-
 
   <link name="body">
     <inertial>
@@ -22,7 +16,7 @@
     <visual>
       <origin rpy="1.57 0 1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://quadruped_description/meshes/frame_aluminum_motor_case.stl"/>
+        <mesh filename="model://my_quadruped/meshes/frame_aluminum_motor_case.dae" />
       </geometry>
       <material name="grey"/>
     </visual>
@@ -31,11 +25,15 @@
         xyz="0 0 0"
         rpy="1.57 0 1.57" />
       <geometry>
-        <mesh
-          filename="package://quadruped_description/meshes/frame_aluminum_motor_case.stl" />
+        <mesh filename="model://my_quadruped/meshes/frame_aluminum_motor_case.dae" />
       </geometry>
     </collision>
   </link>
+
+  <joint name="dummy_joint" type="fixed">
+     <parent link="dummy"/>
+     <child link="body"/>
+  </joint>
 
   <link name="front_left_u">
     <inertial>
@@ -47,7 +45,7 @@
     <visual>
       <origin rpy="1.57 0 1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl"/>
+        <mesh filename="model://my_quadruped/meshes/joint_gear_upper_assembly.stl" />
       </geometry>
       <material name="grey"/>
     </visual>
@@ -56,8 +54,7 @@
         xyz="0 0 0"
         rpy="1.57 0 1.57" />
       <geometry>
-        <mesh
-          filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl" />
+        <mesh filename="model://my_quadruped/meshes/joint_gear_upper_assembly.stl" />
       </geometry>
     </collision>
   </link>
@@ -72,7 +69,7 @@
     <visual>
       <origin rpy="1.57 3.14 1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl"/>
+        <mesh filename="model://my_quadruped/meshes/joint_gear_upper_assembly.stl" />
       </geometry>
       <material name="grey"/>
     </visual>
@@ -81,8 +78,7 @@
         xyz="0 0 0"
         rpy="1.57 3.14 1.57" />
       <geometry>
-        <mesh
-          filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl" />
+        <mesh filename="model://my_quadruped/meshes/joint_gear_upper_assembly.stl" />
       </geometry>
     </collision>
   </link>
@@ -97,7 +93,7 @@
     <visual>
       <origin rpy="1.57 3.14 1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl"/>
+        <mesh filename="model://my_quadruped/meshes/joint_gear_upper_assembly.stl" />
       </geometry>
       <material name="grey"/>
     </visual>
@@ -106,8 +102,7 @@
         xyz="0 0 0"
         rpy="1.57 3.14 1.57" />
       <geometry>
-        <mesh
-          filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl" />
+        <mesh filename="model://my_quadruped/meshes/joint_gear_upper_assembly.stl" />
       </geometry>
     </collision>
   </link>
@@ -122,7 +117,7 @@
     <visual>
       <origin rpy="1.57 0 1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl"/>
+        <mesh filename="model://my_quadruped/meshes/joint_gear_upper_assembly.stl" />
       </geometry>
       <material name="grey"/>
     </visual>
@@ -131,8 +126,7 @@
         xyz="0 0 0"
         rpy="1.57 0 1.57" />
       <geometry>
-        <mesh
-          filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl" />
+        <mesh filename="model://my_quadruped/meshes/joint_gear_upper_assembly.stl" />
       </geometry>
     </collision>
   </link>
@@ -147,7 +141,7 @@
     <visual>
       <origin rpy="1.57 0 1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl"/>
+        <mesh filename="model://my_quadruped/meshes/Assembly_lower_link_v2.stl" />
       </geometry>
       <material name="grey"/>
     </visual>
@@ -156,8 +150,7 @@
         xyz="0 0 0"
         rpy="1.57 0 1.57" />
       <geometry>
-        <mesh
-          filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl" />
+        <mesh filename="model://my_quadruped/meshes/Assembly_lower_link_v2.stl" />
       </geometry>
     </collision>
   </link>
@@ -172,7 +165,7 @@
     <visual>
       <origin rpy="-1.57 0 -1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl"/>
+        <mesh filename="model://my_quadruped/meshes/Assembly_lower_link_v2.stl" />
       </geometry>
       <material name="grey"/>
     </visual>
@@ -181,8 +174,7 @@
         xyz="0 0 0"
         rpy="-1.57 0 -1.57" />
       <geometry>
-        <mesh
-          filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl" />
+        <mesh filename="model://my_quadruped/meshes/Assembly_lower_link_v2.stl" />
       </geometry>
     </collision>
   </link>
@@ -197,7 +189,7 @@
     <visual>
       <origin rpy="-1.57 0 -1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl"/>
+        <mesh filename="model://my_quadruped/meshes/Assembly_lower_link_v2.stl" />
       </geometry>
       <material name="grey"/>
     </visual>
@@ -206,8 +198,7 @@
         xyz="0 0 0"
         rpy="-1.57 0 -1.57" />
       <geometry>
-        <mesh
-          filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl" />
+        <mesh filename="model://my_quadruped/meshes/Assembly_lower_link_v2.stl" />
       </geometry>
     </collision>
   </link>
@@ -222,7 +213,7 @@
     <visual>
       <origin rpy="1.57 0 1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl"/>
+        <mesh filename="model://my_quadruped/meshes/Assembly_lower_link_v2.stl" />
       </geometry>
       <material name="grey"/>
     </visual>
@@ -231,8 +222,7 @@
         xyz="0 0 0"
         rpy="1.57 0 1.57" />
       <geometry>
-        <mesh
-          filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl" />
+        <mesh filename="model://my_quadruped/meshes/Assembly_lower_link_v2.stl" />
       </geometry>
     </collision>
   </link>

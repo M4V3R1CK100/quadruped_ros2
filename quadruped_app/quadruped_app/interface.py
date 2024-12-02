@@ -19,38 +19,38 @@ class my_node(Node):
 
         self.get_logger().info("Interface Node initialized")
 
-        self.speed = 0.0  # Por ejemplo, velocidad de 1.0 m/s
-        self.rotation = 0.0  # Por ejemplo, rotación de 0.5 radianes
+        self.speed        = 0.0  # Por ejemplo, velocidad de 1.0 m/s
+        self.rotation     = 0.0  # Por ejemplo, rotación de 0.5 radianes
         self.traslation_x = 0.0  # Por ejemplo, traslación de 2.0 metros
         self.traslation_z = 0.0  # Por ejemplo, traslación de 2.0 metros
-        self.motion = 0.0  # Por ejemplo, traslación de 2.0 metros
+        self.motion       = 0.0  # Por ejemplo, traslación de 2.0 metros
     
     def timer_callback(self):
 
         # Asignar valores a los campos de MotionParams (ajusta según la estructura del mensaje)
-        self.motion_params.speed = self.speed  # Por ejemplo, velocidad de 1.0 m/s
-        self.motion_params.rotation = self.rotation # Por ejemplo, rotación de 0.5 radianes
+        self.motion_params.speed        = self.speed  # Por ejemplo, velocidad de 1.0 m/s
+        self.motion_params.rotation     = self.rotation # Por ejemplo, rotación de 0.5 radianes
         self.motion_params.traslation_x = self.traslation_x  # Por ejemplo, traslación de 2.0 metros
         self.motion_params.traslation_z = self.traslation_z  # Por ejemplo, traslación de 2.0 metros
-        self.motion_params.motion = self.motion  # Por ejemplo, traslación de 2.0 metros
+        self.motion_params.motion       = self.motion  # Por ejemplo, traslación de 2.0 metros
 
         # Publicar el mensaje en el tema 'motion_params'
         self.pub.publish(self.motion_params)
 
     def update_params(self, speed, rotation, traslation_x, traslation_z, motion):
         # Método para actualizar las variables del nodo
-        self.speed = speed
-        self.rotation = rotation
+        self.speed        = speed
+        self.rotation     = rotation
         self.traslation_x = traslation_x
         self.traslation_z = traslation_z
-        self.motion = motion
+        self.motion       = motion
 
 
-def ros_spin(node):
+def ros_spin(node: my_node):
     # Este método se ejecutará en un hilo separado
     rclpy.spin(node)
 
-def interface(page: ft.Page, node):
+def interface(page: ft.Page, node: my_node):
     page.title = "Quadruped Controller"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.window.height      = 750

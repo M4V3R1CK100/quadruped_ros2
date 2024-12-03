@@ -1,0 +1,23 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 100 #Hz
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+      parameters:
+        state_publish_rate: 50
+
+    joint_trajectory_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+joint_trajectory_controller:
+  ros_parameters:
+    joints:
+      - camera_joint
+    interface_name: position
+    command_interface:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+

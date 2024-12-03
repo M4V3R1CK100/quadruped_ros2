@@ -35,15 +35,19 @@ class my_node(Node):
         self.motion_params.motion       = self.motion  # Por ejemplo, traslación de 2.0 metros
 
         # Publicar el mensaje en el tema 'motion_params'
-        self.pub.publish(self.motion_params)
+        # self.pub.publish(self.motion_params)
 
     def update_params(self, speed, rotation, traslation_x, traslation_z, motion):
+        print(speed, rotation, traslation_x, traslation_z, motion, "jota")
         # Método para actualizar las variables del nodo
-        self.speed        = speed
-        self.rotation     = rotation
-        self.traslation_x = traslation_x
-        self.traslation_z = traslation_z
-        self.motion       = motion
+        # Asignar valores a los campos de MotionParams (ajusta según la estructura del mensaje)
+        self.motion_params.speed        = speed  # Por ejemplo, velocidad de 1.0 m/s
+        self.motion_params.rotation     = rotation # Por ejemplo, rotación de 0.5 radianes
+        self.motion_params.traslation_x = traslation_x  # Por ejemplo, traslación de 2.0 metros
+        self.motion_params.traslation_z = traslation_z  # Por ejemplo, traslación de 2.0 metros
+        self.motion_params.motion       = motion  # Por ejemplo, traslación de 2.0 metros
+
+        self.pub.publish(self.motion_params)
 
 
 def ros_spin(node: my_node):
@@ -157,9 +161,10 @@ def interface(page: ft.Page, node: my_node):
         global motion
         page.snack_bar = ft.SnackBar(ft.Text(value=f"The information has been sent", weight=ft.FontWeight.BOLD, size=16, color=ft.colors.WHITE),bgcolor=ft.colors.GREEN_700)
         page.snack_bar.open = True
-        node.update_params(float(txt_velocity.value.split("%")[0]), float(txt_angle.value.split("°")[0]), float(txt_x_pos.value), float(txt_z_pos.value),motion)
-        motion = 0.0
         page.update()
+        node.update_params(float(txt_velocity.value.split("%")[0]), float(txt_angle.value.split("°")[0]), float(txt_x_pos.value), float(txt_z_pos.value), motion)
+        motion = 0.0
+
 
     def home_position(e):
         global motion

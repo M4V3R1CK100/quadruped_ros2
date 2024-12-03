@@ -1,41 +1,112 @@
 <robot name="quadruped" >
+  
+  <material name="blue">
+      <color rgba="0 0 0.5 1" />
+  </material>
 
+  <material name="grey">
+      <color rgba="0.5 0.5 0.5 1" />
+  </material>
+
+  <material name="black">
+      <color rgba="0.1 0.1 0.1 1" />
+  </material>
+
+  <material name="white">
+      <color rgba="1 1 1 1" />
+  </material>
   <link name="dummy">
   </link>
 
-  <material name="black">
-    <color rgba="0 0 0 0.5"/>
-  </material>
+  <link name="body">
+    <inertial>
+      <mass
+        value="3.0416" />
+      <inertia
+        ixx="0.0073301"
+        ixy="2.1671E-09"
+        ixz="1.9602E-06"
+        iyy="0.0077176"
+        iyz="-1.1292E-05"
+        izz="0.0059691" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 1.57" xyz="0 0 -0.06"/>
+      <geometry>
+        <mesh filename="package://quadruped_description/meshes/frame_aluminum_motor.stl" />
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 -0.06"
+        rpy="0 0 1.57" />
+      <geometry>
+        <mesh filename="package://quadruped_description/meshes/frame_aluminum_motor.stl" />
+      </geometry>
+    </collision>
+  </link>
 
   <joint name="dummy_joint" type="fixed">
      <parent link="dummy"/>
      <child link="body"/>
   </joint>
-
-  <link name="body">
+  
+  <link
+    name="camera_link">
     <inertial>
-      <mass value="8.4" />
-      <inertia ixx="0.14596" ixy="0.00010"  ixz="0.00013"
-               iyy="0.08855" iyz="-0.03467"
-               izz="0.11796" />
+      <mass
+        value="0.046222" />
+      <inertia
+        ixx="2.633E-06"
+        ixy="-4.2166E-09"
+        ixz="1.2531E-08"
+        iyy="2.5049E-05"
+        iyz="9.9718E-08"
+        izz="2.639E-05" />
     </inertial>
     <visual>
-      <origin rpy="1.57 0 1.57" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://quadruped_description/meshes/frame_aluminum_motor_case.stl"/>
-      </geometry>
-      <material name="black"/>
-    </visual>
-    <collision>
       <origin
         xyz="0 0 0"
         rpy="1.57 0 1.57" />
       <geometry>
         <mesh
-          filename="package://quadruped_description/meshes/frame_aluminum_motor_case.stl" />
+          filename="package://quadruped_description/meshes/camera_link.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_description/meshes/camera_link.stl" />
       </geometry>
     </collision>
   </link>
+
+  <joint
+    name="camera_joint" type="revolute">
+    <origin
+      xyz="0.2 0 0.42525"
+      rpy="0 0 0" />
+    <parent
+      link="body" />
+    <child
+      link="camera_link" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="100"
+      velocity="100" />
+  </joint> 
 
   <link name="front_left_u">
     <inertial>
@@ -47,20 +118,26 @@
     <visual>
       <origin rpy="1.57 0 1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl"/>
+        <mesh filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl" />
       </geometry>
-      <material name="black"/>
+      <material name="grey"/>
     </visual>
     <collision>
       <origin
         xyz="0 0 0"
         rpy="1.57 0 1.57" />
       <geometry>
-        <mesh
-          filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl" />
+        <mesh filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl" />
       </geometry>
     </collision>
   </link>
+  <joint name="front_left_joint1" type="revolute">
+    <limit effort="1000.0" lower="-3.14" upper="3.14" velocity="0.5"/>
+    <parent link="body"/>
+    <child link="front_left_u"/>
+    <origin xyz="0.11 0.05 0" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+  </joint>
 
   <link name="front_right_u">
     <inertial>
@@ -72,17 +149,16 @@
     <visual>
       <origin rpy="1.57 3.14 1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl"/>
+        <mesh filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl" />
       </geometry>
-      <material name="black"/>
+      <material name="grey"/>
     </visual>
     <collision>
       <origin
         xyz="0 0 0"
         rpy="1.57 3.14 1.57" />
       <geometry>
-        <mesh
-          filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl" />
+        <mesh filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl" />
       </geometry>
     </collision>
   </link>
@@ -97,17 +173,16 @@
     <visual>
       <origin rpy="1.57 3.14 1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl"/>
+        <mesh filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl" />
       </geometry>
-      <material name="black"/>
+      <material name="grey"/>
     </visual>
     <collision>
       <origin
         xyz="0 0 0"
         rpy="1.57 3.14 1.57" />
       <geometry>
-        <mesh
-          filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl" />
+        <mesh filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl" />
       </geometry>
     </collision>
   </link>
@@ -122,17 +197,16 @@
     <visual>
       <origin rpy="1.57 0 1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl"/>
+        <mesh filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl" />
       </geometry>
-      <material name="black"/>
+      <material name="grey"/>
     </visual>
     <collision>
       <origin
         xyz="0 0 0"
         rpy="1.57 0 1.57" />
       <geometry>
-        <mesh
-          filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl" />
+        <mesh filename="package://quadruped_description/meshes/joint_gear_upper_assembly.stl" />
       </geometry>
     </collision>
   </link>
@@ -147,17 +221,16 @@
     <visual>
       <origin rpy="1.57 0 1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl"/>
+        <mesh filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl" />
       </geometry>
-      <material name="black"/>
+      <material name="grey"/>
     </visual>
     <collision>
       <origin
         xyz="0 0 0"
         rpy="1.57 0 1.57" />
       <geometry>
-        <mesh
-          filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl" />
+        <mesh filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl" />
       </geometry>
     </collision>
   </link>
@@ -172,17 +245,16 @@
     <visual>
       <origin rpy="-1.57 0 -1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl"/>
+        <mesh filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl" />
       </geometry>
-      <material name="black"/>
+      <material name="grey"/>
     </visual>
     <collision>
       <origin
         xyz="0 0 0"
         rpy="-1.57 0 -1.57" />
       <geometry>
-        <mesh
-          filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl" />
+        <mesh filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl" />
       </geometry>
     </collision>
   </link>
@@ -197,17 +269,16 @@
     <visual>
       <origin rpy="-1.57 0 -1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl"/>
+        <mesh filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl" />
       </geometry>
-      <material name="black"/>
+      <material name="grey"/>
     </visual>
     <collision>
       <origin
         xyz="0 0 0"
         rpy="-1.57 0 -1.57" />
       <geometry>
-        <mesh
-          filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl" />
+        <mesh filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl" />
       </geometry>
     </collision>
   </link>
@@ -222,17 +293,16 @@
     <visual>
       <origin rpy="1.57 0 1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl"/>
+        <mesh filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl" />
       </geometry>
-      <material name="black"/>
+      <material name="grey"/>
     </visual>
     <collision>
       <origin
         xyz="0 0 0"
         rpy="1.57 0 1.57" />
       <geometry>
-        <mesh
-          filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl" />
+        <mesh filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl" />
       </geometry>
     </collision>
   </link>
@@ -253,13 +323,7 @@
     <axis xyz="0 1 0" />
   </joint>
 
-  <joint name="front_left_joint1" type="revolute">
-    <limit effort="1000.0" lower="-3.14" upper="3.14" velocity="0.5"/>
-    <parent link="body"/>
-    <child link="front_left_u"/>
-    <origin xyz="0.11 0.05 0" rpy="0 0 0" />
-    <axis xyz="0 1 0" />
-  </joint>
+  
 
   <joint name="front_left_joint2" type="revolute">
     <limit effort="1000.0" lower="-3.14" upper="3.14" velocity="0.5"/>
@@ -299,7 +363,6 @@
     <child link="back_right_d"/>
     <origin xyz="0.4 0.005 0" rpy="0 0 0" />
     <axis xyz="0 1 0" />
-  </joint>
-
+  </joint> 
 
 </robot>

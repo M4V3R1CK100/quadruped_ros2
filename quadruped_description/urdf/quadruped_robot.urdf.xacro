@@ -20,7 +20,7 @@
     <visual>
       <origin rpy="0 0 ${pi / 2.0}" xyz="0 0 -0.06"/>
       <geometry>
-        <mesh filename="model://my_quadruped/meshes/frame_aluminum_motor.stl" />
+        <mesh filename="file://$(find quadruped_description)/meshes/frame_aluminum_motor.stl" />
       </geometry>
       <material name="grey"/>
     </visual>
@@ -29,7 +29,7 @@
         xyz="0 0 -0.06"
         rpy="0 0 ${pi / 2.0}" />
       <geometry>
-        <mesh filename="model://my_quadruped/meshes/frame_aluminum_motor.stl" />
+        <mesh filename="file://$(find quadruped_description)//meshes/frame_aluminum_motor.stl" />
       </geometry>
     </collision>
   </link>
@@ -58,7 +58,7 @@
         rpy="${pi / 2.0} 0 ${pi / 2.0}" />
       <geometry>
         <mesh
-          filename="model://my_quadruped/meshes/camera_link.stl" />
+          filename="file://$(find quadruped_description)//meshes/camera_link.stl" />
       </geometry>
       <material
         name="">
@@ -72,7 +72,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="model://my_quadruped/meshes/camera_link.stl" />
+          filename="file://$(find quadruped_description)//meshes/camera_link.stl" />
       </geometry>
     </collision>
   </link>
@@ -105,7 +105,7 @@
     <visual>
       <origin rpy="1.57 0 1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="model://my_quadruped/meshes/joint_gear_upper_assembly.stl" />
+        <mesh filename="file://$(find quadruped_description)//meshes/joint_gear_upper_assembly.stl" />
       </geometry>
       <material name="grey"/>
     </visual>
@@ -114,7 +114,7 @@
         xyz="0 0 0"
         rpy="1.57 0 1.57" />
       <geometry>
-        <mesh filename="model://my_quadruped/meshes/joint_gear_upper_assembly.stl" />
+        <mesh filename="file://$(find quadruped_description)//meshes/joint_gear_upper_assembly.stl" />
       </geometry>
     </collision>
   </link>
@@ -136,7 +136,7 @@
     <visual>
       <origin rpy="1.57 3.14 1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="model://my_quadruped/meshes/joint_gear_upper_assembly.stl" />
+        <mesh filename="file://$(find quadruped_description)//meshes/joint_gear_upper_assembly.stl" />
       </geometry>
       <material name="grey"/>
     </visual>
@@ -145,7 +145,7 @@
         xyz="0 0 0"
         rpy="1.57 3.14 1.57" />
       <geometry>
-        <mesh filename="model://my_quadruped/meshes/joint_gear_upper_assembly.stl" />
+        <mesh filename="file://$(find quadruped_description)//meshes/joint_gear_upper_assembly.stl" />
       </geometry>
     </collision>
   </link>
@@ -160,7 +160,7 @@
     <visual>
       <origin rpy="1.57 3.14 1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="model://my_quadruped/meshes/joint_gear_upper_assembly.stl" />
+        <mesh filename="file://$(find quadruped_description)//meshes/joint_gear_upper_assembly.stl" />
       </geometry>
       <material name="grey"/>
     </visual>
@@ -169,7 +169,7 @@
         xyz="0 0 0"
         rpy="1.57 3.14 1.57" />
       <geometry>
-        <mesh filename="model://my_quadruped/meshes/joint_gear_upper_assembly.stl" />
+        <mesh filename="file://$(find quadruped_description)//meshes/joint_gear_upper_assembly.stl" />
       </geometry>
     </collision>
   </link>
@@ -184,7 +184,7 @@
     <visual>
       <origin rpy="1.57 0 1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="model://my_quadruped/meshes/joint_gear_upper_assembly.stl" />
+        <mesh filename="file://$(find quadruped_description)//meshes/joint_gear_upper_assembly.stl" />
       </geometry>
       <material name="grey"/>
     </visual>
@@ -193,7 +193,7 @@
         xyz="0 0 0"
         rpy="1.57 0 1.57" />
       <geometry>
-        <mesh filename="model://my_quadruped/meshes/joint_gear_upper_assembly.stl" />
+        <mesh filename="file://$(find quadruped_description)//meshes/joint_gear_upper_assembly.stl" />
       </geometry>
     </collision>
   </link>
@@ -208,7 +208,7 @@
     <visual>
       <origin rpy="1.57 0 1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="model://my_quadruped/meshes/Assembly_lower_link_v2.stl" />
+        <mesh filename="file://$(find quadruped_description)//meshes/Assembly_lower_link_v2.stl" />
       </geometry>
       <material name="grey"/>
     </visual>
@@ -217,7 +217,7 @@
         xyz="0 0 0"
         rpy="1.57 0 1.57" />
       <geometry>
-        <mesh filename="model://my_quadruped/meshes/Assembly_lower_link_v2.stl" />
+        <mesh filename="file://$(find quadruped_description)//meshes/Assembly_lower_link_v2.stl" />
       </geometry>
     </collision>
   </link>
@@ -232,7 +232,7 @@
     <visual>
       <origin rpy="-1.57 0 -1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="model://my_quadruped/meshes/Assembly_lower_link_v2.stl" />
+        <mesh filename="file://$(find quadruped_description)//meshes/Assembly_lower_link_v2.stl" />
       </geometry>
       <material name="grey"/>
     </visual>
@@ -241,7 +241,7 @@
         xyz="0 0 0"
         rpy="-1.57 0 -1.57" />
       <geometry>
-        <mesh filename="model://my_quadruped/meshes/Assembly_lower_link_v2.stl" />
+        <mesh filename="file://$(find quadruped_description)//meshes/Assembly_lower_link_v2.stl" />
       </geometry>
     </collision>
   </link>
@@ -256,7 +256,7 @@
     <visual>
       <origin rpy="-1.57 0 -1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="model://my_quadruped/meshes/Assembly_lower_link_v2.stl" />
+        <mesh filename="file://$(find quadruped_description)//meshes/Assembly_lower_link_v2.stl" />
       </geometry>
       <material name="grey"/>
     </visual>
@@ -265,7 +265,7 @@
         xyz="0 0 0"
         rpy="-1.57 0 -1.57" />
       <geometry>
-        <mesh filename="model://my_quadruped/meshes/Assembly_lower_link_v2.stl" />
+        <mesh filename="file://$(find quadruped_description)//meshes/Assembly_lower_link_v2.stl" />
       </geometry>
     </collision>
   </link>
@@ -280,7 +280,7 @@
     <visual>
       <origin rpy="1.57 0 1.57" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="model://my_quadruped/meshes/Assembly_lower_link_v2.stl" />
+        <mesh filename="file://$(find quadruped_description)//meshes/Assembly_lower_link_v2.stl" />
       </geometry>
       <material name="grey"/>
     </visual>
@@ -289,7 +289,7 @@
         xyz="0 0 0"
         rpy="1.57 0 1.57" />
       <geometry>
-        <mesh filename="model://my_quadruped/meshes/Assembly_lower_link_v2.stl" />
+        <mesh filename="file://$(find quadruped_description)//meshes/Assembly_lower_link_v2.stl" />
       </geometry>
     </collision>
   </link>

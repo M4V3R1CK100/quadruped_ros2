@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<robot name="quadruped" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    
+    <!-- LLamado de los otros xacros -->
+    <xacro:include filename="common_properties.urdf.xacro" />
+    <xacro:include filename="quadruped_robot.urdf.xacro" />
+    <xacro:include filename="quadruped_gazebo.urdf.xacro" />
+
+
+</robot>

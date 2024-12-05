@@ -4,22 +4,25 @@ import launch_ros
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.parameter_descriptions import ParameterValue
+import xacro
 
 def generate_launch_description():
     # Obtén las rutas correctas para los archivos
-    urdf_path = os.path.join(get_package_share_directory('quadruped_description'),
-                             'urdf','quadruped.urdf')
     
     rviz_config_path = os.path.join(get_package_share_directory('quadruped_description'),
                                     'rviz','urdf_config.rviz')
     
-    # Lee el contenido del archivo URDF
-    with open(urdf_path, 'r') as urdf_file:
-        urdf_content = urdf_file.read()
     
-    # Pasa el contenido del URDF como un parámetro en robot_state_publisher
-    robot_description = ParameterValue(urdf_content, value_type=str)
+    pkg_name = 'quadruped_description'  # the package name
 
+    pkg_share = get_package_share_directory(pkg_name)
+
+    urdf_path = 'urdf/quadruped.urdf.xacro'
+
+    # extracting the robot deffinition from the xacro file
+    xacro_file = os.path.join(pkg_share, urdf_path)
+    robot_description = xacro.process_file(xacro_file).toxml()
+  
     # Nodo robot_state_publisher
     robot_state_publisher_node = launch_ros.actions.Node(
         package='robot_state_publisher',

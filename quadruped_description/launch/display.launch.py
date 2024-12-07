@@ -4,6 +4,7 @@ import launch_ros
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.parameter_descriptions import ParameterValue
+from launch.event_handlers import OnProcessExit
 import xacro
 
 def generate_launch_description():
@@ -22,6 +23,7 @@ def generate_launch_description():
     # extracting the robot deffinition from the xacro file
     xacro_file = os.path.join(pkg_share, urdf_path)
     robot_description = xacro.process_file(xacro_file).toxml()
+    
   
     # Nodo robot_state_publisher
     robot_state_publisher_node = launch_ros.actions.Node(

@@ -8,14 +8,11 @@
   <link name="body">
     <inertial>
       <mass
-        value="3.0416" />
+        value="3" />
       <inertia
-        ixx="0.0073301"
-        ixy="2.1671E-09"
-        ixz="1.9602E-06"
-        iyy="0.0077176"
-        iyz="-1.1292E-05"
-        izz="0.0059691" />
+        ixx="0.039" ixy="-0.0000173" ixz="0.00929"
+        iyy="0.04613" iyz="-0.0000446"
+        izz="0.0301" />
     </inertial>
     <visual>
       <origin rpy="0 0 ${pi / 2.0}" xyz="0 0 -0.06"/>
@@ -33,24 +30,16 @@
       </geometry>
     </collision>
   </link>
-
-  <joint name="dummy_joint" type="fixed">
-     <parent link="dummy"/>
-     <child link="body"/>
-  </joint>
   
   <link
     name="camera_link">
     <inertial>
       <mass
-        value="0.046222" />
+        value="0.05" />
       <inertia
-        ixx="2.633E-06"
-        ixy="-4.2166E-09"
-        ixz="1.2531E-08"
-        iyy="2.5049E-05"
-        iyz="9.9718E-08"
-        izz="2.639E-05" />
+        ixx="0.0000275" ixy="0.000000153" ixz="0.0"
+        iyy="0.0000867" iyz="0.0" 
+        izz="0.000110" />
     </inertial>
     <visual>
       <origin
@@ -77,30 +66,12 @@
     </collision>
   </link>
 
-  <joint
-    name="camera_joint" type="revolute">
-    <origin
-      xyz="0.2 0 0.42525"
-      rpy="0 0 0" />
-    <parent
-      link="body" />
-    <child
-      link="camera_link" />
-    <axis
-      xyz="0 1 0" />
-    <limit
-      lower="-3.14"
-      upper="3.14"
-      effort="100"
-      velocity="100" />
-  </joint> 
-
   <link name="front_left_u">
     <inertial>
-      <mass value="0.814" />
-      <inertia ixx="0.008" ixy="0.0"  ixz="0.001"
-               iyy="0.008" iyz="0.001"
-               izz="0.001" />
+      <mass value="0.8" />
+      <inertia ixx="0.0008" ixy="0.0063"  ixz="0.0"
+               iyy="0.07" iyz="0.0"
+               izz="0.071" />
     </inertial>
     <visual>
       <origin rpy="1.57 0 1.57" xyz="0 0 0"/>
@@ -118,20 +89,13 @@
       </geometry>
     </collision>
   </link>
-  <joint name="front_left_joint1" type="revolute">
-    <limit effort="1000.0" lower="-3.14" upper="3.14" velocity="0.5"/>
-    <parent link="body"/>
-    <child link="front_left_u"/>
-    <origin xyz="0.11 0.05 0" rpy="0 0 0" />
-    <axis xyz="0 1 0" />
-  </joint>
 
   <link name="front_right_u">
     <inertial>
-      <mass value="0.814" />
-      <inertia ixx="7701247.352E-09" ixy="96047.710E-09"  ixz="-1228944.675E-09"
-               iyy="7801785.041E-09" iyz="550113.749E-09"
-               izz="877983.793E-09" />
+      <mass value="0.8" />
+      <inertia ixx="0.0008" ixy="0.0063"  ixz="0.0"
+               iyy="0.07" iyz="0.0"
+               izz="0.071" />
     </inertial>
     <visual>
       <origin rpy="1.57 3.14 1.57" xyz="0 0 0"/>
@@ -152,10 +116,10 @@
 
   <link name="back_left_u">
     <inertial>
-      <mass value="0.814" />
-      <inertia ixx="7701247.352E-09" ixy="96047.710E-09"  ixz="-1228944.675E-09"
-               iyy="7801785.041E-09" iyz="550113.749E-09"
-               izz="877983.793E-09" />
+      <mass value="0.8" />
+      <inertia ixx="0.0008" ixy="0.0063"  ixz="0.0"
+               iyy="0.07" iyz="0.0"
+               izz="0.071" />
     </inertial>
     <visual>
       <origin rpy="1.57 3.14 1.57" xyz="0 0 0"/>
@@ -176,10 +140,10 @@
 
   <link name="back_right_u">
     <inertial>
-      <mass value="0.814" />
-      <inertia ixx="7701247.352E-09" ixy="96047.710E-09"  ixz="-1228944.675E-09"
-               iyy="7801785.041E-09" iyz="550113.749E-09"
-               izz="877983.793E-09" />
+      <mass value="0.8" />
+      <inertia ixx="0.0008" ixy="0.0063"  ixz="0.0"
+               iyy="0.07" iyz="0.0"
+               izz="0.071" />
     </inertial>
     <visual>
       <origin rpy="1.57 0 1.57" xyz="0 0 0"/>
@@ -200,10 +164,10 @@
 
   <link name="front_left_d">
     <inertial>
-      <mass value="0.5" />
-      <inertia ixx="7141392.287E-09" ixy="-13.226E-09"  ixz="-913664.184E-09"
-               iyy="7895374.282E-09" iyz="-31.485E-09"
-               izz="830881.651E-09" />
+      <mass value="1.0" />
+      <inertia ixx="0.0039" ixy="0.012"  ixz="0.0"
+               iyy="0.1412" iyz="0.0"
+               izz="0.1447" />
     </inertial>
     <visual>
       <origin rpy="1.57 0 1.57" xyz="0 0 0"/>
@@ -224,10 +188,10 @@
 
   <link name="front_right_d">
     <inertial>
-      <mass value="0.5" />
-      <inertia ixx="7141392.287E-09" ixy="-13.226E-09"  ixz="-913664.184E-09"
-               iyy="7895374.282E-09" iyz="-31.485E-09"
-               izz="830881.651E-09" />
+      <mass value="1.0" />
+      <inertia ixx="0.0039" ixy="0.012"  ixz="0.0"
+               iyy="0.1412" iyz="0.0"
+               izz="0.1447" />
     </inertial>
     <visual>
       <origin rpy="-1.57 0 -1.57" xyz="0 0 0"/>
@@ -248,10 +212,10 @@
   
   <link name="back_left_d">
     <inertial>
-      <mass value="0.5" />
-      <inertia ixx="7141392.287E-09" ixy="-13.226E-09"  ixz="-913664.184E-09"
-               iyy="7895374.282E-09" iyz="-31.485E-09"
-               izz="830881.651E-09" />
+      <mass value="1.0" />
+      <inertia ixx="0.0039" ixy="0.012"  ixz="0.0"
+               iyy="0.1412" iyz="0.0"
+               izz="0.1447" />
     </inertial>
     <visual>
       <origin rpy="-1.57 0 -1.57" xyz="0 0 0"/>
@@ -272,10 +236,10 @@
   
   <link name="back_right_d">
     <inertial>
-      <mass value="0.5" />
-      <inertia ixx="7141392.287E-09" ixy="-13.226E-09"  ixz="-913664.184E-09"
-               iyy="7895374.282E-09" iyz="-31.485E-09"
-               izz="830881.651E-09" />
+      <mass value="1.0" />
+      <inertia ixx="0.0039" ixy="0.012"  ixz="0.0"
+               iyy="0.1412" iyz="0.0"
+               izz="0.1447" />
     </inertial>
     <visual>
       <origin rpy="1.57 0 1.57" xyz="0 0 0"/>
@@ -293,6 +257,29 @@
       </geometry>
     </collision>
   </link>
+
+  <joint name="dummy_joint" type="fixed">
+     <parent link="dummy"/>
+     <child link="body"/>
+  </joint>
+
+  <joint
+    name="camera_joint" type="revolute">
+    <origin
+      xyz="0.2 0 0.42525"
+      rpy="0 0 0" />
+    <parent
+      link="body" />
+    <child
+      link="camera_link" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="100"
+      velocity="100" />
+  </joint> 
  
     <joint name="front_right_joint1" type="revolute">
     <limit effort="1000.0" lower="-3.14" upper="3.14" velocity="0.5"/>
@@ -310,7 +297,13 @@
     <axis xyz="0 1 0" />
   </joint>
 
-  
+  <joint name="front_left_joint1" type="revolute">
+    <limit effort="1000.0" lower="-3.14" upper="3.14" velocity="0.5"/>
+    <parent link="body"/>
+    <child link="front_left_u"/>
+    <origin xyz="0.11 0.05 0" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+  </joint>
 
   <joint name="front_left_joint2" type="revolute">
     <limit effort="1000.0" lower="-3.14" upper="3.14" velocity="0.5"/>

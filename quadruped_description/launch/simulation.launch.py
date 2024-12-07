@@ -2,8 +2,8 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch_ros.actions import Node
-from launch.actions import IncludeLaunchDescription, ExecuteProcess
-
+from launch.actions import IncludeLaunchDescription, ExecuteProcess, RegisterEventHandler, SetEnvironmentVariable, TimerAction
+from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import SetEnvironmentVariable
 import xacro
@@ -48,6 +48,7 @@ def generate_launch_description():
                              arguments=['-topic', 'robot_description',
                                         '-entity', 'quadruped'],
                              output='screen')
+    
     # spawning the joint broadcaster
     # Procesos para cargar los controladores
     spawn_broadcaster = ExecuteProcess(
@@ -71,6 +72,19 @@ def generate_launch_description():
         launch_gazebo,
         node_spawn_entity,
         # node_rviz,
-        spawn_broadcaster,
-        spawn_controller
+        # Cargar controladores después de spawnear
+        RegisterEventHandler(
+            OnProcessExit(
+                target_action=node_spawn_entity,
+                on_exit=[
+                    TimerAction(
+                        period=5.0,  # Delay en segundos (ajusta este valor)
+                        actions=[
+                            spawn_broadcaster,
+                            spawn_controller
+                        ]
+                    )
+                ]
+            )
+        )
     ])

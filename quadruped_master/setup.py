@@ -27,6 +27,7 @@ setup(
         'console_scripts': [
             'movement_node= quadruped_master.movement:main',
             'test_mov= quadruped_master.test_mov:main',
+            'joy_to_motion_node=quadruped_master.joy_to_motion:main'
         ],
     },
 )

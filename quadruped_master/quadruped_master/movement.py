@@ -21,15 +21,13 @@ class MyNode(Node):
         self.joint_states_pub = self.create_publisher(JointState, 'joint_states', 10)
         self.motion_sub = self.create_subscription(MotionParams, "motion_params", self.movement_manage, 10)
         self.motion_params = MotionParams()
-        self.rotation = 0
-        self.speed = 0
         self.node_joint_states = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
         self.joint_states = JointState()
         self.joint_states.position = self.node_joint_states
         self.joint_states.header = Header()
-        self.joint_states.name = ['front_right_joint1', 'front_right_joint2', 'front_left_joint1', 'front_left_joint2', 
-                            'back_left_joint1', 'back_left_joint2', 'back_right_joint1', 'back_right_joint2']
+        self.joint_states.name = ['camera_joint','front_right_joint1', 'front_right_joint2', 'front_left_joint1', 'front_left_joint2', 
+                                  'back_right_joint1', 'back_right_joint2','back_left_joint1', 'back_left_joint2']
 
     def send_joint_states(self, joint_goals_list, time_delay):
         for goals in joint_goals_list:
@@ -58,7 +56,6 @@ class MyNode(Node):
         self.joint_states.header.stamp = self.get_clock().now().to_msg()
         self.joint_states_pub.publish(self.joint_states)
         
-
 def Home(node: MyNode):
     stand_1=0.3
     stand_2=1.4
@@ -134,7 +131,7 @@ def movement(node: MyNode, speed):
 
         plan = dummy_traslation(-length/2, 0, 0,node.node_joint_states, node.rotation)
         node.send_joint_states(plan,time_delay)
-
+        speed = node.motion_params.speed
 
 def user_input_loop(node: MyNode):
     global quit

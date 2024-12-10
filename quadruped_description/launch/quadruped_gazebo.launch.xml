@@ -1,6 +1,6 @@
 <launch>
     <let name="urdf_path" 
-         value="$(find-pkg-share quadruped_description)/urdf/quadruped.xacro" />
+         value="$(find-pkg-share quadruped_description)/urdf/quadruped.urdf.xacro" />
 
     <node pkg="robot_state_publisher" exec="robot_state_publisher">
         <param name="robot_description"

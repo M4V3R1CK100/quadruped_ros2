@@ -14,7 +14,7 @@ def generate_launch_description():
         package='quadruped_master',
         executable='movement_node',
         output='screen'
-    )    
+    )
 
     joy_node = Node(
         package='joy',

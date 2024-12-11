@@ -18,10 +18,10 @@ joint_trajectory_controller:
       - front_right_joint2
       - front_left_joint1
       - front_left_joint2
-      - back_right_joint1
-      - back_right_joint2
       - back_left_joint1
       - back_left_joint2
+      - back_right_joint1
+      - back_right_joint2
     interface_name: position
     command_interfaces:
       - position

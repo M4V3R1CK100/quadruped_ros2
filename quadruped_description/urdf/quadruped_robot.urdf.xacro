@@ -8,11 +8,11 @@
   <link name="body">
     <inertial>
       <mass
-        value="3" />
+        value="1" />
       <inertia
-        ixx="0.039" ixy="-0.0000173" ixz="0.00929"
-        iyy="0.04613" iyz="-0.0000446"
-        izz="0.0301" />
+        ixx="0.08" ixy="-0.0000173" ixz="0.00929"
+        iyy="0.08613" iyz="-0.0000446"
+        izz="0.0601" />
     </inertial>
     <visual>
       <origin rpy="0 0 ${pi / 2.0}" xyz="0 0 -0.06"/>

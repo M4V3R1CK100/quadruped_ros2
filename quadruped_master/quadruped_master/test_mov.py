@@ -36,7 +36,7 @@ class QuadrupedJointCommander(Node):
         # Configurar las posiciones deseadas y el tiempo de movimiento
         point = JointTrajectoryPoint()
         point.positions = self.target_positions
-        point.time_from_start.sec = 2  # Movimiento en 2 segundos
+        point.time_from_start.sec = 3 # Movimiento en 2 segundos
         
         msg.points.append(point)
         

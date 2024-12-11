@@ -41,8 +41,7 @@ class MyNode(Node):
         # Publicar el mensaje
         self.publisher.publish(self.joint_msg)
 
-        
-#kznasd
+    
 def main(args=None):
     rclpy.init(args=args)
     movement_node = MyNode()

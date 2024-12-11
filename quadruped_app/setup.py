@@ -27,7 +27,8 @@ setup(
         'console_scripts': [
             'interface_node=quadruped_app.interface:main',
             'interface_example=quadruped_app.interface_example:main',
-            'image_node=quadruped_app.streaming:main'
+            'image_node=quadruped_app.streaming:main',
+            'test_interface=quadruped_app.test_interface:main'
         ],
     },
 )

@@ -18,10 +18,11 @@ class MyNode(Node):
     def __init__(self):
         super().__init__("movement_node")
         self.get_logger().info("Nodo creado")
-        self.joint_states_pub = self.create_publisher(JointState, 'joint_states', 10)
+        self.joint_states_pub = self.create_publisher(JointState, 'joint_goals', 10)
         self.motion_sub = self.create_subscription(MotionParams, "motion_params", self.update_motion_params, 10)
         self.motion_params = MotionParams()
         self.rotation = 0
+        self.motion = 0
 
         #Joint states del nodo
         self.node_joint_states = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -34,7 +35,8 @@ class MyNode(Node):
         
         # Timer para procesar movimientos a intervalos regulares
         self.timer = self.create_timer(0.1, self.process_movement)
-        self.publish_joint_states([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+        self.joint_states.header.stamp = self.get_clock().now().to_msg()
+        self.joint_states_pub.publish(self.joint_states)
 
     def update_motion_params(self, msg):
         self.motion_params = msg
@@ -46,11 +48,12 @@ class MyNode(Node):
             gaits(self, self.motion_params.speed)
 
         elif self.motion_params.traslation_x != 0 or self.motion_params.traslation_z != 0 or self.motion_params.rotation:
-            plan = dummy_traslation(self.motion_params.traslation_x, self.motion_params.traslation_z,self.motion_params.rotation, self.rotation, self.node_joint_states, 0)
+            plan = dummy_traslation(self.motion_params.traslation_x, self.motion_params.traslation_z,self.motion_params.rotation, self.rotation, self.node_joint_states)
             self.send_joint_states(plan, 0.2)
             self.rotation = self.motion_params.rotation
 
-        if self.motion_params.motion == 1.0:
+        if self.motion_params.motion == 1.0 and self.motion_params.motion!=self.motion:
+            self.motion =1
             initial_position(self)
 
 
@@ -77,7 +80,7 @@ def initial_position(node: MyNode):
     joint_position_state=[0.0, -1.0, 2.2, -1.0, 2.2, -1.0, 2.2, -1.0, 2.2]
     node.publish_joint_states(joint_position_state)
 
-    time.sleep(1)
+    time.sleep(4)
     joint_position_state=[0.0, stand_1, stand_2,stand_1,stand_2,stand_1,stand_2,stand_1,stand_2] # stand up principal
     node.publish_joint_states(joint_position_state)
 

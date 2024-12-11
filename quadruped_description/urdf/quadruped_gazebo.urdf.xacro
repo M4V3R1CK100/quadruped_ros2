@@ -149,7 +149,7 @@
   <!-- ros_control plugin -->
   <gazebo>
     <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
-      <parameters>/home/erick/quad_ws/src/quadruped_description/config/joint_controller.yaml</parameters>
+      <parameters>$(find quadruped_description)/config/joint_controller.yaml</parameters>
     </plugin>
   </gazebo>
 

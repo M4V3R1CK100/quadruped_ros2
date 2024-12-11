@@ -14,12 +14,11 @@ from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
 class MyNode(Node):
     def __init__(self):
-        super().__init__("gazebo_communication")
+        super().__init__("gazebo_communication_node")
         self.get_logger().info("Nodo creado")
-        self.joint_states_pub = self.create_subscription(JointState, 'joint_states', 10)
+        self.joint_states_pub = self.create_subscription(JointState, 'joint_goals',self.send_joint_trajectory, 10)
         self.publisher = self.create_publisher(JointTrajectory, '/joint_trajectory_controller/joint_trajectory', 10)
-        self.joint_msg = JointTrajectory()
-        self.joint_msg.joint_names = [
+        self.joint_names = [
             'camera_joint',
             'front_right_joint1',
             'front_right_joint2',
@@ -30,32 +29,37 @@ class MyNode(Node):
             'back_right_joint1',
             'back_right_joint2'
         ]
-        self.point = JointTrajectoryPoint()    
-        self.point.time_from_start.sec = 2 # Movimiento en 2 segundos
         
     def send_joint_trajectory(self,msg):
-        # Configurar las posiciones deseadas y el tiempo de movimiento
-        self.get_logger().warn(msg)
-        
-        # self.joint_msg.points.append(msg.position)
-        
-        # # Publicar el mensaje
-        # self.publisher.publish(self.joint_msg)
+        # Crear un nuevo mensaje de trayectoria
+        joint_msg = JointTrajectory()
+        joint_msg.joint_names = self.joint_names
+
+        # Crear un nuevo punto de trayectoria
+        point = JointTrajectoryPoint()
+        point.positions = msg.position  # Posiciones deseadas
+        point.time_from_start.sec = 2   # Movimiento en 2 segundos
+
+        # Añadir el punto al mensaje de trayectoria
+        joint_msg.points.append(point)
+
+        # Publicar el mensaje
+        self.publisher.publish(joint_msg)
+        self.get_logger().info("Trayectoria publicada: %s" % str(msg.position))
 
     
+
 def main(args=None):
     rclpy.init(args=args)
     movement_node = MyNode()
 
-    #Home(movement_node)
-    
-    # Crear un hilo para user_input_loop
-    # user_input_loop(movement_node)
+    try:
+        rclpy.spin(movement_node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        rclpy.shutdown()
 
-    # Ejecutar el nodo ROS
-    rclpy.spin(movement_node)
-
-    rclpy.shutdown()
 
 if __name__ == '__main__':
     main()

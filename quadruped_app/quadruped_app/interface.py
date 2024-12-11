@@ -29,6 +29,8 @@ class my_node(Node):
         self.traslation_x = 0.0  # Por ejemplo, traslación de 2.0 metros
         self.traslation_z = 0.0  # Por ejemplo, traslación de 2.0 metros
         self.motion       = 0.0  # Por ejemplo, traslación de 2.0 metros
+        self.pub.publish(self.motion_params)
+
 
     def listener_image_callback(self, msg):
         self.latest_image = msg.data
@@ -58,17 +60,6 @@ class my_node(Node):
 
         self.pub.publish(self.motion_params)
 
-def update_image(page: ft.Page, app: FletApp):
-    img_component = ft.Image(width=500, height=500)
-    page.controls.append(img_component)
-    page.update()
-
-    while True:
-        if app.latest_image:
-            img_bytes = base64.b64decode(app.latest_image)
-            img = Image.open(BytesIO(img_bytes))
-            img_component.src_base64 = app.latest_image
-            page.update()
 
 def ros_spin(node: my_node):
     # Este método se ejecutará en un hilo separado
@@ -98,7 +89,7 @@ def interface(page: ft.Page, node: my_node):
 
 
     txt_velocity = ft.TextField(value="0%",  read_only=True, text_align=ft.TextAlign.CENTER, width=80 )
-    txt_z_pos    = ft.TextField(value="0.3", read_only=True, text_align=ft.TextAlign.CENTER, width=100, prefix_icon=ft.icons.SWAP_VERT)#label="Z displacement"
+    txt_z_pos    = ft.TextField(value="0.0", read_only=True, text_align=ft.TextAlign.CENTER, width=100, prefix_icon=ft.icons.SWAP_VERT)#label="Z displacement"
     txt_x_pos    = ft.TextField(value="0.0", read_only=True, text_align=ft.TextAlign.CENTER, width=100, prefix_icon=ft.icons.SWAP_HORIZ_OUTLINED)#label="X displacement"
     txt_angle    = ft.TextField(value="0°",  read_only=True, text_align=ft.TextAlign.CENTER, width=80)
     global motion

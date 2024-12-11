@@ -35,11 +35,12 @@ class MyNode(Node):
         
     def send_joint_trajectory(self,msg):
         # Configurar las posiciones deseadas y el tiempo de movimiento
+        self.get_logger().warn(msg)
         
-        self.joint_msg.points.append(self.point)
+        # self.joint_msg.points.append(msg.position)
         
-        # Publicar el mensaje
-        self.publisher.publish(self.joint_msg)
+        # # Publicar el mensaje
+        # self.publisher.publish(self.joint_msg)
 
     
 def main(args=None):

@@ -10,7 +10,7 @@ class QuadrupedJointCommander(Node):
         self.publisher = self.create_publisher(JointTrajectory, '/joint_trajectory_controller/joint_trajectory', 10)
         
         # Temporizador para enviar comandos periódicamente
-        self.timer = self.create_timer(1.0, self.send_joint_trajectory)
+        # self.timer = self.create_timer(1.0, self.send_joint_trajectory)
         
         # Nombres de los joints y posiciones objetivo
         self.joint_names = [
@@ -19,12 +19,14 @@ class QuadrupedJointCommander(Node):
             'front_right_joint2',
             'front_left_joint1',
             'front_left_joint2',
-            'back_right_joint1',
-            'back_right_joint2',
             'back_left_joint1',
-            'back_left_joint2'
+            'back_left_joint2',
+            'back_right_joint1',
+            'back_right_joint2'
         ]
         self.target_positions = [0.0, 0.3, 1.4, 0.3, 1.4, 0.3, 1.4, 0.3, 1.4]
+
+        self.send_joint_trajectory()
 
     def send_joint_trajectory(self):
         # Crear mensaje JointTrajectory
@@ -34,7 +36,7 @@ class QuadrupedJointCommander(Node):
         # Configurar las posiciones deseadas y el tiempo de movimiento
         point = JointTrajectoryPoint()
         point.positions = self.target_positions
-        point.time_from_start.sec = 2  # Movimiento en 2 segundos
+        point.time_from_start.sec = 3 # Movimiento en 2 segundos
         
         msg.points.append(point)
         

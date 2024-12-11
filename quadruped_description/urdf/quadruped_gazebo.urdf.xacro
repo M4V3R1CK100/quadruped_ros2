@@ -2,6 +2,26 @@
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
+  <gazebo reference="front_left_d">
+    <mu1>0.20</mu1>
+    <mu2>0.20</mu2>
+  </gazebo>
+
+  <gazebo reference="front_right_d">
+    <mu1>0.20</mu1>
+    <mu2>0.20</mu2>
+  </gazebo>
+
+  <gazebo reference="back_right_d">
+    <mu1>0.20</mu1>
+    <mu2>0.20</mu2>
+  </gazebo>
+
+  <gazebo reference="back_left_d">
+    <mu1>0.20</mu1>
+    <mu2>0.20</mu2>
+  </gazebo>
+
   <ros2_control name="GazeboSystem" type="system">
     <hardware>
       <plugin>gazebo_ros2_control/GazeboSystem</plugin>
@@ -12,7 +32,7 @@
         <param name="max">3.14</param>
       </command_interface>
       <state_interface name="position">
-        <param name="initial_value">1.0</param>
+        <param name="initial_value">0.0</param>
       </state_interface>
       <state_interface name="velocity" />
     </joint>

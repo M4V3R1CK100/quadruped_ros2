@@ -58,18 +58,6 @@ class my_node(Node):
 
         self.pub.publish(self.motion_params)
 
-def update_image(page: ft.Page, app: FletApp):
-    img_component = ft.Image(width=500, height=500)
-    page.controls.append(img_component)
-    page.update()
-
-    while True:
-        if app.latest_image:
-            img_bytes = base64.b64decode(app.latest_image)
-            img = Image.open(BytesIO(img_bytes))
-            img_component.src_base64 = app.latest_image
-            page.update()
-
 def ros_spin(node: my_node):
     # Este método se ejecutará en un hilo separado
     rclpy.spin(node)

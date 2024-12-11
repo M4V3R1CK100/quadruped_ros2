@@ -2,7 +2,10 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import JointState
-from std_msgs.msg import Header
+from std_msgs.msg import Header, String
+from io import BytesIO
+from PIL import Image
+import base64
 from quadruped_interfaces.msg import MotionParams
 import flet as ft
 import threading
@@ -11,7 +14,9 @@ class my_node(Node):
     def __init__(self):
         super().__init__('interface_node')
         
-        self.pub = self.create_publisher(MotionParams, 'motion_params', 10)
+        self.pub          = self.create_publisher(MotionParams, 'motion_params', 10)
+        self.subscription = self.create_subscription(String,'/image_bytes',self.listener_image_callback,10)
+        self.latest_image = None
 
         self.motion_params = MotionParams()
 
@@ -24,6 +29,10 @@ class my_node(Node):
         self.traslation_x = 0.0  # Por ejemplo, traslación de 2.0 metros
         self.traslation_z = 0.0  # Por ejemplo, traslación de 2.0 metros
         self.motion       = 0.0  # Por ejemplo, traslación de 2.0 metros
+
+    def listener_image_callback(self, msg):
+        self.latest_image = msg.data
+
     
     def timer_callback(self):
 
@@ -49,6 +58,17 @@ class my_node(Node):
 
         self.pub.publish(self.motion_params)
 
+def update_image(page: ft.Page, app: FletApp):
+    img_component = ft.Image(width=500, height=500)
+    page.controls.append(img_component)
+    page.update()
+
+    while True:
+        if app.latest_image:
+            img_bytes = base64.b64decode(app.latest_image)
+            img = Image.open(BytesIO(img_bytes))
+            img_component.src_base64 = app.latest_image
+            page.update()
 
 def ros_spin(node: my_node):
     # Este método se ejecutará en un hilo separado
@@ -245,11 +265,11 @@ def interface(page: ft.Page, node: my_node):
 
     video = ft.Row(
         [
-            ft.Container(
-                    content=ft.Text(value="Aqui va el video", style=ft.FontWeight.BOLD),
-                    border=ft.border.all(width=2, color=ft.colors.BLUE_400), 
-                    border_radius=10, width=500, height=300, alignment=ft.Alignment(0, 0),
-                    padding=20, margin=ft.margin.only(top=10),bgcolor=ft.colors.GREY_800, expand=True
+            ft.Image(
+                src="quadruped.png",
+                width=200,
+                height=200,
+                fit=ft.ImageFit.CONTAIN,
             ),
             ft.Column(
                 [

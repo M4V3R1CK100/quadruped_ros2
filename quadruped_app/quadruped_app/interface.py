@@ -96,6 +96,7 @@ def interface(page: ft.Page, node: my_node):
         )
     )
 
+
     txt_velocity = ft.TextField(value="0%",  read_only=True, text_align=ft.TextAlign.CENTER, width=80 )
     txt_z_pos    = ft.TextField(value="0.3", read_only=True, text_align=ft.TextAlign.CENTER, width=100, prefix_icon=ft.icons.SWAP_VERT)#label="Z displacement"
     txt_x_pos    = ft.TextField(value="0.0", read_only=True, text_align=ft.TextAlign.CENTER, width=100, prefix_icon=ft.icons.SWAP_HORIZ_OUTLINED)#label="X displacement"
@@ -104,6 +105,33 @@ def interface(page: ft.Page, node: my_node):
     motion = 0.0
 
     title        = ft.Text(value="Quadruped Controller", size=28, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_200)
+
+    img_component = ft.Image(width=500, height=500)
+    # Contenedor de la imagen con un título
+    image_container = ft.Column(
+        [
+            ft.Text("Camera View", size=20, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE),
+            img_component
+        ],
+        alignment=ft.MainAxisAlignment.CENTER,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER
+    )
+
+        # Función para actualizar la imagen en tiempo real
+    def update_image():
+        while True:
+            if node.latest_image:
+                try:
+                    # Decodificar la imagen base64
+                    img_bytes = base64.b64decode(node.latest_image)
+                    img_component.src_base64 = node.latest_image
+                    page.update()
+                except Exception as e:
+                    print(f"Error al actualizar la imagen: {e}")
+
+    # Crear un hilo para actualizar la imagen
+    image_thread = threading.Thread(target=update_image, daemon=True)
+    image_thread.start()
     
     def minus_click_gait_vel(e):
         if not(float(txt_velocity.value.split("%")[0]) == float(-100)):
@@ -265,12 +293,7 @@ def interface(page: ft.Page, node: my_node):
 
     video = ft.Row(
         [
-            ft.Image(
-                src="quadruped.png",
-                width=200,
-                height=200,
-                fit=ft.ImageFit.CONTAIN,
-            ),
+            image_container,
             ft.Column(
                 [
                     ft.FloatingActionButton(icon=ft.icons.HOME_ROUNDED, on_click=home_position, bgcolor=ft.colors.BLUE, text="Home Position", width=150),
@@ -301,7 +324,7 @@ def main():
         node = my_node()
 
         # Crear un hilo separado para ejecutar ros_spin
-        ros_thread = threading.Thread(target=ros_spin, args=(node,))
+        ros_thread = threading.Thread(target=ros_spin, args=(node,), daemon=True)
         ros_thread.start()
 
         # Iniciar la interfaz Flet

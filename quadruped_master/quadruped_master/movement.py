@@ -21,8 +21,10 @@ class MyNode(Node):
         self.joint_states_pub = self.create_publisher(JointState, 'joint_goals', 10)
         self.motion_sub = self.create_subscription(MotionParams, "motion_params", self.update_motion_params, 10)
         self.motion_params = MotionParams()
-        self.rotation = 0
+        self.rotation = 0.0
         self.motion = 0
+        self.traslx = 0.0
+        self.traslz = 0.0
 
         #Joint states del nodo
         self.node_joint_states = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -44,18 +46,19 @@ class MyNode(Node):
 
     def process_movement(self):
         # Procesar movimiento en función de los parámetros
-        if self.motion_params.speed != 0.0:
-            gaits(self, self.motion_params.speed)
-
-        elif self.motion_params.traslation_x != 0 or self.motion_params.traslation_z != 0 or self.motion_params.rotation:
-            plan = dummy_traslation(self.motion_params.traslation_x, self.motion_params.traslation_z,self.motion_params.rotation, self.rotation, self.node_joint_states)
-            self.send_joint_states(plan, 0.2)
-            self.rotation = self.motion_params.rotation
-
         if self.motion_params.motion == 1.0 and self.motion_params.motion!=self.motion:
-            self.motion =1
             initial_position(self)
+            self.motion =1
+        if self.motion==1:
+            if self.motion_params.speed != 0.0:
+                gaits(self, self.motion_params.speed)
 
+            elif self.motion_params.traslation_x != self.traslx or self.motion_params.traslation_z != self.traslz or self.motion_params.rotation!= self.rotation:
+                plan = dummy_traslation(self.motion_params.traslation_x-self.traslx, self.motion_params.traslation_z-self.traslz,self.motion_params.rotation - self.rotation, self.node_joint_states, self.rotation)
+                self.rotation = self.motion_params.rotation 
+                self.traslx = self.motion_params.traslation_x
+                self.traslz = self.motion_params.traslation_z
+                self.send_joint_states(plan, 0.2)
 
     def send_joint_states(self, joint_goals_list, time_delay):
         for goals in joint_goals_list:
@@ -63,7 +66,6 @@ class MyNode(Node):
             self.joint_states.position = goals
             self.joint_states.header.stamp = self.get_clock().now().to_msg()  # Actualiza el timestamp antes de publicar
             self.joint_states_pub.publish(self.joint_states)
-            self.get_logger().info(f"Publicando: {goals}")
             time.sleep(time_delay)
 
     def publish_joint_states(self, joint_positions: list):
@@ -87,7 +89,7 @@ def initial_position(node: MyNode):
 def gaits(node: MyNode, f_speed):
     plan       = []
     min_speed  = 0
-    max_speed  = 5
+    max_speed  = 1
     delay_min  = 0.1  # en s
     delay_max  = 0.5  # en s
     length     = 0.15

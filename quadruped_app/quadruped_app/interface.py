@@ -49,7 +49,7 @@ class my_node(Node):
         # self.pub.publish(self.motion_params)
 
     def update_params(self, speed, rotation, traslation_x, traslation_z, motion):
-        print(speed, rotation, traslation_x, traslation_z, motion, "jota")
+        print(speed, rotation, traslation_x, traslation_z, motion, "Enviado")
         # Método para actualizar las variables del nodo
         # Asignar valores a los campos de MotionParams (ajusta según la estructura del mensaje)
         self.motion_params.speed        = speed  # Por ejemplo, velocidad de 1.0 m/s
@@ -59,18 +59,6 @@ class my_node(Node):
         self.motion_params.motion       = motion  # Por ejemplo, traslación de 2.0 metros
 
         self.pub.publish(self.motion_params)
-
-def update_image(page: ft.Page, app: FletApp):
-    img_component = ft.Image(width=500, height=500)
-    page.controls.append(img_component)
-    page.update()
-
-    while True:
-        if app.latest_image:
-            img_bytes = base64.b64decode(app.latest_image)
-            img = Image.open(BytesIO(img_bytes))
-            img_component.src_base64 = app.latest_image
-            page.update()
 
 def ros_spin(node: my_node):
     # Este método se ejecutará en un hilo separado
@@ -212,8 +200,7 @@ def interface(page: ft.Page, node: my_node):
         page.snack_bar = ft.SnackBar(ft.Text(value=f"The information has been sent", weight=ft.FontWeight.BOLD, size=16, color=ft.colors.WHITE),bgcolor=ft.colors.GREEN_700)
         page.snack_bar.open = True
         page.update()
-        node.update_params(float(txt_velocity.value.split("%")[0]), float(txt_angle.value.split("°")[0]), float(txt_x_pos.value), float(txt_z_pos.value), motion)
-        motion = 0.0
+        node.update_params((float(txt_velocity.value.split("%")[0]))/100, float(txt_angle.value.split("°")[0]), float(txt_x_pos.value), float(txt_z_pos.value), motion)
 
 
     def home_position(e):

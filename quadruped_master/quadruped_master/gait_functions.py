@@ -8,9 +8,6 @@ from math import pi, cos, sin, acos, atan2
 from rclpy.node import Node
 import time
 
-global current_position
-current_position = [0,0,0,0,0,0,0,0]
-
 def FK(theta1,theta2, base_on_dummy):
     #t1 = theta1*180/np.pi
     #t2 = theta2*180/np.pi
@@ -89,8 +86,9 @@ def gait(foot_number, length, current_pos): #Front foot? True or False
     positions_plan = []
     steps = 10
     length = length/2
-    n = 2*foot_number -1
+    n = 2*foot_number
     joint_position_state = current_pos
+    print(joint_position_state)
     #1rst leg gait
     first_position = FK(current_pos[n-1], current_pos[n],True)
     #print("first position: ",first_position)
@@ -110,14 +108,16 @@ def gait(foot_number, length, current_pos): #Front foot? True or False
         #print("Position x,z: ",p)
         j = IK(p[0], p[1],True)
         #print("Joints: ",j)
-        joint_position_state[n]=j[1]
         joint_position_state[n-1]=j[0]
+        joint_position_state[n]=j[1]
         positions_plan.append(joint_position_state)
     
     return positions_plan
 
 
 def dummy_traslation(x_trasl, z_trasl, angle ,current_pos, current_rot):
+    print("current position: ", current_pos)
+
     #falta revisar la rotacion
 
     d = 0.22 #Distancia del dummy entra pata y pata
@@ -129,7 +129,7 @@ def dummy_traslation(x_trasl, z_trasl, angle ,current_pos, current_rot):
     trans_z = x_trasl*sin(current_rot) + z_trasl*cos(current_rot)
 
     positions_plan = []
-    joint_position_goal = [0,0,0,0,0,0,0,0]
+    joint_position_goal = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0, 0.0]
     pre_position = [(0,0),(0,0),(0,0),(0,0)]
     final_position = [(0,0),(0,0),(0,0),(0,0)]
 
@@ -140,16 +140,15 @@ def dummy_traslation(x_trasl, z_trasl, angle ,current_pos, current_rot):
         new_x_rot = x_rotation
         new_z_rot = z_rotation
 
-        n = 2*i 
+        n = 2*i +1      #+1 es porque queremos evitar el 1er joint que es la camara
         base_new_arm = angles_new_arm(current_pos[n],current_pos[n+1])
         point_new_arm = FK(base_new_arm[0],base_new_arm[1],False)
+
         pre_position[i] = point_new_arm 
 
         if i >= 2:
-            print("back")
             new_x_trasl = -trans_x
         else:
-            print("frontal")
             new_x_rot = -x_rotation
             new_z_rot = -z_rotation
 
@@ -159,11 +158,10 @@ def dummy_traslation(x_trasl, z_trasl, angle ,current_pos, current_rot):
     steps = 10
 
     for step in range(steps+1):
-        interpolated_position = [(0,0),(0,0),(0,0),(0,0)]
         #print("interpolacion")
 
         for a in range(4):
-            m = 2*a
+            m = 2*a +1      #+1 es porque queremos evitar el 1er joint que es la camara
             x_interp = pre_position[a][0] + (final_position[a][0] - pre_position[a][0]) * (step / steps)
             z_interp = pre_position[a][1] + (final_position[a][1] - pre_position[a][1]) * (step / steps)
 

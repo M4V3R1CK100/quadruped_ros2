@@ -67,13 +67,15 @@ def ros_spin(node: my_node):
 def interface(page: ft.Page, node: my_node):
     page.title = "Quadruped Controller"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
-    page.window.height      = 750
-    page.window.width       = 900
-    page.auto_scroll        = True
+    # page.window.height      = 1500
+    # page.window.width       = 1500
+    # page.auto_scroll        = True
     page.scroll             = ft.ScrollMode.HIDDEN
     page.theme_mode         = "dark" 
     page.window.min_width   = 700
     page.window.min_height  = 700
+
+    page.window.full_screen = True
 
     page. theme = ft. Theme(
         color_scheme_seed=ft.colors.BLUE,
@@ -96,7 +98,7 @@ def interface(page: ft.Page, node: my_node):
 
     title        = ft.Text(value="Quadruped Controller", size=28, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_200)
 
-    img_component = ft.Image(width=500, height=500)
+    img_component = ft.Image(width=800, height=800)
     # Contenedor de la imagen con un título
     image_container = ft.Column(
         [
@@ -323,6 +325,7 @@ def main():
         ros_thread.join()
     finally:
         # Cerrar rclpy correctamente
+        node.destroy_node()
         rclpy.shutdown()
 
 

@@ -50,13 +50,6 @@ def angles_buddy_arm(alpha, beta):
     theta1 = 3.14 -(beta+alpha)
     return (theta1, theta2)
 
-# def send_joints(list_joints):
-#     global current_position
-#     joints_states.position = list_joints
-#     pub.publish(joints_states)
-#     current_position = list_joints
-
-
 def plan_circle( center_x : float , center_y : float , r : float , theta_o : float  , theta_f : float , sentido_x : bool, sentido_y : bool, steeps):
     pos = []
     if (sentido_x and sentido_y):
@@ -111,9 +104,8 @@ def gait(foot_number, length, current_pos): #Front foot? True or False
         joint_position_state[n-1]=j[0]
         joint_position_state[n]=j[1]
         positions_plan.append(joint_position_state)
-    
-    return positions_plan
 
+    return positions_plan
 
 def dummy_traslation(x_trasl, z_trasl, angle ,current_pos, current_rot):
     print("current position: ", current_pos)
@@ -173,53 +165,6 @@ def dummy_traslation(x_trasl, z_trasl, angle ,current_pos, current_rot):
         positions_plan.append(joint_position_goal.copy())
     
     return positions_plan
-
-
-# def movement(speed):
-#     #speed variara de -5 a 5
-#     min_speed = 0
-#     max_speed = 5
-#     delay_min = 0.1  # en s
-#     delay_max = 0.5  # en s
-#     length = 0.15
-
-#     if speed<0:
-#         length = -length
-
-#     # Suponiendo que `velocidad` es el valor actual de la velocidad
-#     time_delay = delay_max - ((abs(speed) - min_speed) / (max_speed - min_speed)) * (delay_max - delay_min)
-#     print(time_delay)
-#     print(speed)
-    
-    
-#     while speed!=0:
-#         print("Traslation")
-#         dummy_traslation(-length/2,0,time_delay)
-#         rospy.sleep(0.05)
-#         print("Front Gait")
-#         if speed>0: #Cuando Avanza
-#             gait(1,length,time_delay)
-#             gait(2,length,time_delay)
-            
-#             dummy_traslation(4*length/2,0, time_delay)
-#             rospy.sleep(1)
-
-#             gait(3,length,time_delay)
-#             gait(4,length,time_delay)
-        
-#         if speed<0: #Cuando retrocede
-#             gait(4,length,time_delay)
-#             gait(3,length,time_delay)
-            
-#             dummy_traslation(4*length/2,0, time_delay)
-#             rospy.sleep(1)
-
-#             gait(2,length,time_delay)
-#             gait(1,length,time_delay)
-
-#         dummy_traslation(-length/2,0, time_delay)
-
-#     pass
 
 if __name__ == "__main__":
     # Coloca aquí cualquier código de prueba o de ejecución que no desees que se ejecute al importar.

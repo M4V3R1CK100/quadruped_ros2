@@ -15,9 +15,14 @@
   <gazebo reference="back_right_d">
     <mu1>0.20</mu1>
     <mu2>0.20</mu2>
-  </gazebo>
+  </gazebo> 
 
   <gazebo reference="back_left_d">
+    <mu1>0.20</mu1>
+    <mu2>0.20</mu2>
+  </gazebo>
+
+  <gazebo reference="body">
     <mu1>0.20</mu1>
     <mu2>0.20</mu2>
   </gazebo>

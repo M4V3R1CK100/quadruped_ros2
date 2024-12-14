@@ -29,7 +29,7 @@ def generate_launch_description():
     else:
         model_path = models_path
 
-    # world_path = os.path.join(pkg_share, 'worlds', 'chesset.world')
+    world_path = os.path.join(pkg_share, 'worlds', 'world_test_wq.world')
 
     # robot state publisher node
     node_robot_state_publisher = Node(
@@ -40,8 +40,10 @@ def generate_launch_description():
     )
     # Gazebo launch file
     launch_gazebo = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([os.path.join(get_package_share_directory('gazebo_ros'), 'launch'), '/gazebo.launch.py'])
-        # launch_arguments={'world': world_path}.items()
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('gazebo_ros'), 'launch', 'gazebo.launch.py')
+        ),
+        launch_arguments={'world': world_path, 'verbose': 'true'}.items()
     )
     # entity spawn node (to spawn the robot from the /robot_description topic)
     node_spawn_entity = Node(package='gazebo_ros', executable='spawn_entity.py',
@@ -57,12 +59,22 @@ def generate_launch_description():
         output='screen'
     )
 
+    # JOINT TRAJECTORY CONTROLLER
     spawn_controller = ExecuteProcess(
         cmd=[
         'ros2', 'control', 'load_controller',
         '--set-state', 'active', 'joint_trajectory_controller'],
         output='screen'
     )
+
+
+    #FORWARD COMMAND CONTROLLER
+    # spawn_controller = ExecuteProcess(
+    #     cmd=[
+    #         'ros2', 'control', 'load_controller',
+    #         '--set-state', 'active', 'position_controller'],
+    #     output='screen'
+    # )
 
 
     # Run the nodes

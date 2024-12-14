@@ -16,7 +16,7 @@ class MyNode(Node):
     def __init__(self):
         super().__init__("gazebo_communication_node")
         self.get_logger().info("Nodo creado")
-        self.joint_states_pub = self.create_subscription(JointState, 'joint_goals',self.send_joint_trajectory, 10)
+        self.joint_goals_sub = self.create_subscription(JointState, 'joint_goals',self.send_joint_trajectory, 10)
         self.publisher = self.create_publisher(JointTrajectory, '/joint_trajectory_controller/joint_trajectory', 10)
         self.joint_names = [
             'camera_joint',

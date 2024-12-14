@@ -4,7 +4,7 @@
     
     <!-- LLamado de los otros xacros -->
     <xacro:include filename="common_properties.urdf.xacro" />
-    <xacro:include filename="quadruped_robot.urdf.xacro" />
+    <xacro:include filename="quadruped_robot3.urdf.xacro" />
     <xacro:include filename="quadruped_gazebo.urdf.xacro" />
 
 

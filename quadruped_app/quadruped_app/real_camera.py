@@ -9,7 +9,7 @@ class ImageSubscriber(Node):
         super().__init__('camera_to_image_raw')
         self.publisher_ = self.create_publisher(Image,'/camera_link/image_raw',10)
         self.cv_bridge     = CvBridge()
-        self.timer      = self.create_timer(0.1, self.timer_callback)                
+        self.timer      = self.create_timer(0.01, self.timer_callback)                
         self.cap        = cv2.VideoCapture(0)
 
 
@@ -20,7 +20,7 @@ class ImageSubscriber(Node):
         if ret == True:
             self.publisher_.publish(self.cv_bridge.cv2_to_imgmsg(frame, 'bgr8'))
 
-        self.get_logger().info('Piblishing video frame')
+        self.get_logger().info('Publishing video frame')
 
 def main(args=None):
     rclpy.init(args=args)

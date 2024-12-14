@@ -13,6 +13,8 @@ class ImagePublisher(Node):
         self.publisher = self.create_publisher(String, '/image_bytes', 10)
         self.bridge = CvBridge()
 
+        self.get_logger().info('raw_to_bytes_node initialized')
+
     def listener_callback(self, msg):
         cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
         _, buffer = cv2.imencode('.jpg', cv_image)

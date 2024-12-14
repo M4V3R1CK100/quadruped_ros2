@@ -20,8 +20,6 @@ class my_node(Node):
 
         self.motion_params = MotionParams()
 
-        self.timer = self.create_timer(0.1, self.timer_callback)
-
         self.get_logger().info("Interface Node initialized")
 
         self.speed        = 0.0  # Por ejemplo, velocidad de 1.0 m/s
@@ -35,18 +33,6 @@ class my_node(Node):
     def listener_image_callback(self, msg):
         self.latest_image = msg.data
 
-    
-    def timer_callback(self):
-
-        # Asignar valores a los campos de MotionParams (ajusta según la estructura del mensaje)
-        self.motion_params.speed        = self.speed  # Por ejemplo, velocidad de 1.0 m/s
-        self.motion_params.rotation     = self.rotation # Por ejemplo, rotación de 0.5 radianes
-        self.motion_params.traslation_x = self.traslation_x  # Por ejemplo, traslación de 2.0 metros
-        self.motion_params.traslation_z = self.traslation_z  # Por ejemplo, traslación de 2.0 metros
-        self.motion_params.motion       = self.motion  # Por ejemplo, traslación de 2.0 metros
-
-        # Publicar el mensaje en el tema 'motion_params'
-        # self.pub.publish(self.motion_params)
 
     def update_params(self, speed, rotation, traslation_x, traslation_z, motion):
         print(speed, rotation, traslation_x, traslation_z, motion, "Enviado")
@@ -69,7 +55,7 @@ def interface(page: ft.Page, node: my_node):
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     # page.window.height      = 1500
     # page.window.width       = 1500
-    # page.auto_scroll        = True
+    page.auto_scroll        = True
     page.scroll             = ft.ScrollMode.HIDDEN
     page.theme_mode         = "dark" 
     page.window.min_width   = 700
@@ -96,18 +82,11 @@ def interface(page: ft.Page, node: my_node):
     global motion
     motion = 0.0
 
-    title        = ft.Text(value="Quadruped Controller", size=28, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_200)
-
-    img_component = ft.Image(width=800, height=800)
-    # Contenedor de la imagen con un título
-    image_container = ft.Column(
-        [
-            ft.Text("Camera View", size=20, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE),
-            img_component
-        ],
-        alignment=ft.MainAxisAlignment.CENTER,
-        horizontal_alignment=ft.CrossAxisAlignment.CENTER
+    title        = ft.Container(
+        content=ft.Text(value="Quadruped Controller", size=28, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_200), height=200
     )
+
+    img_component = ft.Image(width=800, border_radius=ft.border_radius.all(20))
 
         # Función para actualizar la imagen en tiempo real
     def update_image():
@@ -284,7 +263,9 @@ def interface(page: ft.Page, node: my_node):
 
     video = ft.Row(
         [
-            image_container,
+            ft.Container(
+                content=img_component, padding=50
+            ), 
             ft.Column(
                 [
                     ft.FloatingActionButton(icon=ft.icons.HOME_ROUNDED, on_click=home_position, bgcolor=ft.colors.BLUE, text="Home Position", width=150),
@@ -292,7 +273,7 @@ def interface(page: ft.Page, node: my_node):
                     ft.FloatingActionButton(icon=ft.icons.SEND, on_click=send_data, bgcolor=ft.colors.GREEN_700, text="Send Data", width=150),
                 ], width=150, height=300, horizontal_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.SPACE_AROUND, expand=True
             )
-        ], vertical_alignment=ft.CrossAxisAlignment.CENTER
+        ], vertical_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.CENTER
     )
 
     page.add(
@@ -301,7 +282,7 @@ def interface(page: ft.Page, node: my_node):
                 title,
                 video, 
                 movement_control        
-            ], spacing=25, horizontal_alignment=ft.CrossAxisAlignment.CENTER
+            ], spacing=100, horizontal_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.SPACE_AROUND, expand=True
         )
     )
 

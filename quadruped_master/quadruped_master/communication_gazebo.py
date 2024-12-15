@@ -45,7 +45,6 @@ class MyNode(Node):
 
         # Publicar el mensaje
         self.publisher.publish(joint_msg)
-        self.get_logger().info("Trayectoria publicada: %s" % str(msg.position))
 
     
 

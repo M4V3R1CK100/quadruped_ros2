@@ -9,7 +9,7 @@ class ImageSubscriber(Node):
         super().__init__('image_subscriber')
         self.subscription = self.create_subscription(
             Image,
-            '/camera_link/image_raw',  # Cambia este topic según sea necesario
+            '/image_raw',  # Cambia este topic según sea necesario
             self.listener_callback,
             10)
         self.bridge = CvBridge()

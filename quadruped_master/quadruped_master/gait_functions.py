@@ -77,11 +77,10 @@ def plan_circle( center_x : float , center_y : float , r : float , theta_o : flo
 
 def gait(foot_number, length, current_pos): #Front foot? True or False
     positions_plan = []
-    steps = 10
+    steps = 20
     length = length/2
     n = 2*foot_number
     joint_position_state = current_pos
-    print(joint_position_state)
     #1rst leg gait
     first_position = FK(current_pos[n-1], current_pos[n],True)
     #print("first position: ",first_position)
@@ -94,7 +93,6 @@ def gait(foot_number, length, current_pos): #Front foot? True or False
         if foot_number>2: #Para las patas traseras
             posd = plan_circle(first_position[0]-length, first_position[1], length, 0,180, True, False, steps)
         else: #Patas delanteras
-            print(first_position[0]+length, first_position[1])
             posd = plan_circle(first_position[0]+length, first_position[1], length, 0,180,  False, False, steps)
 
     for p in posd:
@@ -103,7 +101,7 @@ def gait(foot_number, length, current_pos): #Front foot? True or False
         #print("Joints: ",j)
         joint_position_state[n-1]=j[0]
         joint_position_state[n]=j[1]
-        positions_plan.append(joint_position_state)
+        positions_plan.append(joint_position_state.copy())
 
     return positions_plan
 

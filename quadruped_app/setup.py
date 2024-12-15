@@ -29,8 +29,8 @@ setup(
             'image_node=quadruped_app.streaming:main', # Para ver en una ventana lo que es publicado por image_raw
             'raw_to_bytes_node=quadruped_app.raw_to_bytes:main', 
             'real_camera_node=quadruped_app.real_camera:main', 
-            'realsense_camera_node=quadruped_app.realsense_to_bytes:main', 
-            
+            'realsense_camera_node=quadruped_app.realsense_to_bytes:main',
+            'quadruped_visualizer_node=quadruped_app.quadruped_visualizer:main'            
         ],
     },
 )

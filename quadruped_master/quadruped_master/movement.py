@@ -42,7 +42,6 @@ class MyNode(Node):
 
     def update_motion_params(self, msg):
         self.motion_params = msg
-        self.get_logger().info(f"Recibido motion_params: {msg}")
 
     def process_movement(self):
         # Procesar movimiento en función de los parámetros
@@ -78,7 +77,6 @@ def initial_position(node: MyNode):
     stand_1=0.3
     stand_2=1.4
     # up
-    print("Home position")
     joint_position_state=[0.0, -1.0, 2.2, -1.0, 2.2, -1.0, 2.2, -1.0, 2.2]
     node.publish_joint_states(joint_position_state)
 

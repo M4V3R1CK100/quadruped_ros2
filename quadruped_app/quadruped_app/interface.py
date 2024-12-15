@@ -14,11 +14,12 @@ class my_node(Node):
     def __init__(self):
         super().__init__('interface_node')
         
-        self.pub          = self.create_publisher(MotionParams, 'motion_params', 10)
-        self.subscription = self.create_subscription(String,'/image_bytes',self.listener_image_callback,10)
-        self.latest_image = None
-
-        self.motion_params = MotionParams()
+        self.pub                 = self.create_publisher(MotionParams, 'motion_params', 10)
+        self.sub_image_cam       = self.create_subscription(String,'/image_bytes',self.listener_image_cam,10)
+        self.sub_image_rviz      = self.create_subscription(String,'/topic_rviz' ,self.listener_image_rviz,10)
+        self.latest_image_camera = None
+        self.latest_image_rviz   = None
+        self.motion_params       = MotionParams()
 
         self.get_logger().info("Interface Node initialized")
 
@@ -30,9 +31,11 @@ class my_node(Node):
         self.pub.publish(self.motion_params)
 
 
-    def listener_image_callback(self, msg):
-        self.latest_image = msg.data
+    def listener_image_cam(self, msg):
+        self.latest_image_camera = msg.data
 
+    def listener_image_rviz(self, msg):
+        self.latest_image_rviz = msg.data
 
     def update_params(self, speed, rotation, traslation_x, traslation_z, motion):
         print(speed, rotation, traslation_x, traslation_z, motion, "Enviado")
@@ -86,24 +89,39 @@ def interface(page: ft.Page, node: my_node):
         content=ft.Text(value="Quadruped Controller", size=28, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_200), height=200
     )
 
-    img_component = ft.Image(width=800, border_radius=ft.border_radius.all(20))
+    img_cam  = ft.Image(width=800, border_radius=ft.border_radius.all(20))
+    img_rviz = ft.Image(width=500, border_radius=ft.border_radius.all(20))
 
-        # Función para actualizar la imagen en tiempo real
-    def update_image():
+    # Función para actualizar la imagen en tiempo real
+    def update_image_cam():
         while True:
-            if node.latest_image:
+            if node.latest_image_camera:
                 try:
                     # Decodificar la imagen base64
-                    img_bytes = base64.b64decode(node.latest_image)
-                    img_component.src_base64 = node.latest_image
+                    img_bytes_cam = base64.b64decode(node.latest_image_camera)
+                    img_cam.src_base64 = node.latest_image_camera
                     page.update()
                 except Exception as e:
                     print(f"Error al actualizar la imagen: {e}")
 
-    # Crear un hilo para actualizar la imagen
-    image_thread = threading.Thread(target=update_image, daemon=True)
-    image_thread.start()
-    
+    def update_image_rviz():
+        while True:
+            if node.latest_image_rviz:
+                try:
+                    # Decodificar la imagen base64
+                    img_bytes_rviz = base64.b64decode(node.latest_image_rviz)
+                    img_rviz.src_base64 = node.latest_image_rviz
+                    page.update()
+                except Exception as e:
+                    print(f"Error al actualizar la imagen: {e}")
+
+    # Crear un hilo para actualizar imágenes
+    image_thread_cam = threading.Thread(target=update_image_cam, daemon=True)
+    image_thread_cam.start()
+
+    image_thread_rviz = threading.Thread(target=update_image_rviz, daemon=True)
+    image_thread_rviz.start()
+
     def minus_click_gait_vel(e):
         if not(float(txt_velocity.value.split("%")[0]) == float(-100)):
             txt_velocity.value = str(round(float(txt_velocity.value.split("%")[0]) - 10)) + "%"
@@ -264,14 +282,17 @@ def interface(page: ft.Page, node: my_node):
     video = ft.Row(
         [
             ft.Container(
-                content=img_component, padding=50
+                content=img_cam, padding=50
             ), 
             ft.Column(
                 [
                     ft.FloatingActionButton(icon=ft.icons.HOME_ROUNDED, on_click=home_position, bgcolor=ft.colors.BLUE, text="Home Position", width=150),
                     ft.FloatingActionButton(icon=ft.icons.POWER_SETTINGS_NEW_OUTLINED, on_click=home_position, bgcolor=ft.colors.BLUE, text="Rest Position", width=150),
                     ft.FloatingActionButton(icon=ft.icons.SEND, on_click=send_data, bgcolor=ft.colors.GREEN_700, text="Send Data", width=150),
-                ], width=150, height=300, horizontal_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.SPACE_AROUND, expand=True
+                ], width=150, horizontal_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.SPACE_AROUND, expand=True
+            ), 
+            ft.Container(
+                content=ft.Text("aquí va la imagen")
             )
         ], vertical_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.CENTER
     )

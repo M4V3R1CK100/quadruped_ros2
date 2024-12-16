@@ -18,7 +18,7 @@ class QuadrupedImagePublisher(Node):
         self.rotation_subscription = self.create_subscription(
             MotionParams, '/motion_params', self.rotation_callback, 10)
         # Publicador de imágenes
-        self.publisher = self.create_publisher(Image, '/image_raw', 10)
+        self.publisher = self.create_publisher(Image, '/image_mat_raw', 10)
         self.bridge = CvBridge()
 
         # Longitudes del cuadrúpedo

@@ -15,10 +15,10 @@ class my_node(Node):
         super().__init__('interface_node')
         
         self.pub                 = self.create_publisher(MotionParams, 'motion_params', 10)
-        self.sub_image_cam       = self.create_subscription(String,'/image_bytes',self.listener_image_cam,10)
-        self.sub_image_rviz      = self.create_subscription(String,'/topic_rviz' ,self.listener_image_rviz,10)
+        self.sub_image_cam       = self.create_subscription(String,'/image_bytes_camera',self.listener_image_cam,10)
+        self.sub_image_mat      = self.create_subscription(String, '/image_bytes_mat' ,self.listener_image_mat,10)
         self.latest_image_camera = None
-        self.latest_image_rviz   = None
+        self.latest_image_mat   = None
         self.motion_params       = MotionParams()
 
         self.get_logger().info("Interface Node initialized")
@@ -34,8 +34,8 @@ class my_node(Node):
     def listener_image_cam(self, msg):
         self.latest_image_camera = msg.data
 
-    def listener_image_rviz(self, msg):
-        self.latest_image_rviz = msg.data
+    def listener_image_mat(self, msg):
+        self.latest_image_mat = msg.data
 
     def update_params(self, speed, rotation, traslation_x, traslation_z, motion):
         print(speed, rotation, traslation_x, traslation_z, motion, "Enviado")
@@ -90,7 +90,7 @@ def interface(page: ft.Page, node: my_node):
     )
 
     img_cam  = ft.Image(width=800, border_radius=ft.border_radius.all(20))
-    img_rviz = ft.Image(width=500, border_radius=ft.border_radius.all(20))
+    img_mat  = ft.Image(width=500, border_radius=ft.border_radius.all(20))
 
     # Función para actualizar la imagen en tiempo real
     def update_image_cam():
@@ -100,18 +100,18 @@ def interface(page: ft.Page, node: my_node):
                     # Decodificar la imagen base64
                     img_bytes_cam = base64.b64decode(node.latest_image_camera)
                     img_cam.src_base64 = node.latest_image_camera
-                    page.update()
+                    img_cam.update()
                 except Exception as e:
                     print(f"Error al actualizar la imagen: {e}")
 
-    def update_image_rviz():
+    def update_image_mat():
         while True:
-            if node.latest_image_rviz:
+            if node.latest_image_mat:
                 try:
                     # Decodificar la imagen base64
-                    img_bytes_rviz = base64.b64decode(node.latest_image_rviz)
-                    img_rviz.src_base64 = node.latest_image_rviz
-                    page.update()
+                    img_bytes_rviz = base64.b64decode(node.latest_image_mat)
+                    img_mat.src_base64 = node.latest_image_mat
+                    img_mat.update()
                 except Exception as e:
                     print(f"Error al actualizar la imagen: {e}")
 
@@ -119,7 +119,7 @@ def interface(page: ft.Page, node: my_node):
     image_thread_cam = threading.Thread(target=update_image_cam, daemon=True)
     image_thread_cam.start()
 
-    image_thread_rviz = threading.Thread(target=update_image_rviz, daemon=True)
+    image_thread_rviz = threading.Thread(target=update_image_mat, daemon=True)
     image_thread_rviz.start()
 
     def minus_click_gait_vel(e):
@@ -282,7 +282,11 @@ def interface(page: ft.Page, node: my_node):
     video = ft.Row(
         [
             ft.Container(
-                content=img_cam, padding=50
+                content=img_cam, padding=0, margin=60,
+                border = ft.border.all(10, ft.Colors.WHITE),
+                border_radius= 1.0
+                
+
             ), 
             ft.Column(
                 [
@@ -292,7 +296,10 @@ def interface(page: ft.Page, node: my_node):
                 ], width=150, horizontal_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.SPACE_AROUND, expand=True
             ), 
             ft.Container(
-                content=ft.Text("aquí va la imagen")
+                content=img_mat,padding=0, margin=60,
+                border = ft.border.all(10, ft.Colors.WHITE),
+                border_radius= 1.0
+                
             )
         ], vertical_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.CENTER
     )

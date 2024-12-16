@@ -5,6 +5,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import Joy
 from quadruped_interfaces.msg import MotionParams
 import time
+import math
 
 
 
@@ -22,14 +23,15 @@ class Joy_Control(Node):
         self.motion_quadruped.traslation_x = 0.0  # Por ejemplo, traslación de 2.0 metros
         self.motion_quadruped.traslation_z = 0.0  # Por ejemplo, traslación de 2.0 metros
         self.motion_quadruped.motion       = 0.0  # Por ejemplo, traslación de 2.0 metros
+        self.motion_quadruped.camera       = 0.0  # Por ejemplo, ángulo de 1.0 radianes
         
         
     def listener_callback(self, msg: Joy):
         
         self.motion_quadruped.speed        = (round(self.motion_quadruped.speed, 1) + 0.1 if (msg.buttons[1] and (self.motion_quadruped.speed <  1.0)) else
-                                             (round(self.motion_quadruped.speed, 1) - 0.1 if (msg.buttons[2] and (self.motion_quadruped.speed > -1.0)) else 
+                                             (round(self.motion_quadruped.speed, 1) - 0.1 if (msg.buttons[3] and (self.motion_quadruped.speed > -1.0)) else 
                                               round(self.motion_quadruped.speed, 1)))
-        self.motion_quadruped.rotation     = (round(self.motion_quadruped.rotation, 1) + 5.0 if (msg.buttons[3] and (self.motion_quadruped.rotation <  30.0)) else
+        self.motion_quadruped.rotation     = (round(self.motion_quadruped.rotation, 1) + 5.0 if (msg.buttons[2] and (self.motion_quadruped.rotation <  30.0)) else
                                              (round(self.motion_quadruped.rotation, 1) - 5.0 if (msg.buttons[0] and (self.motion_quadruped.rotation > -30.0)) else 
                                               round(self.motion_quadruped.rotation, 1)))
 
@@ -37,8 +39,17 @@ class Joy_Control(Node):
                                              
         self.motion_quadruped.traslation_z = (round(self.motion_quadruped.traslation_z + 0.05*msg.axes[7], 2)) if ((self.motion_quadruped.traslation_z + 0.05*msg.axes[7]<0.245) and (self.motion_quadruped.traslation_z + 0.05*msg.axes[7]>-0.245)) else self.motion_quadruped.traslation_z
 
-        self.motion_quadruped.motion       = self.motion_quadruped.motion
+        self.motion_quadruped.motion       = (round(0.0, 1) if (msg.buttons[4]) else
+                                             (round(1.0, 1) if (msg.buttons[5]) else 
+                                             (round(2.0, 1) if (msg.buttons[6]) else 
+                                             (round(3.0, 1) if (msg.buttons[7]) else 
+                                              self.motion_quadruped.motion))))
 
+        self.motion_quadruped.camera       = (round(self.motion_quadruped.camera, 1) + math.radians(10) if ((msg.axes[4]==1)  and (self.motion_quadruped.camera <  math.radians(30))) else
+                                             (round(self.motion_quadruped.camera, 1) - math.radians(10) if ((msg.axes[4]==-1) and (self.motion_quadruped.camera > -math.radians(30))) else 
+                                              round(self.motion_quadruped.camera, 1)))
+        
+        print(msg.axes[4]==-1)
 
         # self.motion_quadruped.speed        = 0.1 if (msg.buttons[1]) else (-0.1 if (msg.buttons[3]) else 0.0)
         # self.motion_quadruped.rotation     = 0.1 if (msg.buttons[2]) else (-0.1 if (msg.buttons[0]) else 0.0)

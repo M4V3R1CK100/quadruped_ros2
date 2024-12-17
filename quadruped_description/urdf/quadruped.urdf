@@ -35,7 +35,11 @@
       <geometry>
         <mesh filename="package://quadruped_description/meshes/frame_aluminum_motor.stl" />
       </geometry>
-      <material name="grey"/>
+      <material
+        name="">
+        <color
+          rgba="1.0 1.0 1.0 1.0"/>
+      </material>
     </visual>
     <collision>
       <origin
@@ -223,7 +227,11 @@
       <geometry>
         <mesh filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl" />
       </geometry>
-      <material name="grey"/>
+      <material
+        name="">
+        <color
+          rgba="1.0 1.0 1.0 1.0"/>
+      </material>
     </visual>
     <collision>
       <origin
@@ -247,7 +255,11 @@
       <geometry>
         <mesh filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl" />
       </geometry>
-      <material name="grey"/>
+      <material
+        name="">
+        <color
+          rgba="1.0 1.0 1.0 1.0"/>
+      </material>
     </visual>
     <collision>
       <origin
@@ -271,7 +283,11 @@
       <geometry>
         <mesh filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl" />
       </geometry>
-      <material name="grey"/>
+      <material
+        name="">
+        <color
+          rgba="1.0 1.0 1.0 1.0"/>
+      </material>
     </visual>
     <collision>
       <origin
@@ -295,7 +311,11 @@
       <geometry>
         <mesh filename="package://quadruped_description/meshes/Assembly_lower_link_v2.stl" />
       </geometry>
-      <material name="grey"/>
+      <material
+        name="">
+        <color
+          rgba="1.0 1.0 1.0 1.0"/>
+      </material>
     </visual>
     <collision>
       <origin

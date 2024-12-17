@@ -86,11 +86,11 @@ def interface(page: ft.Page, node: my_node):
     motion = 0.0
 
     title        = ft.Container(
-        content=ft.Text(value="Quadruped Controller", size=28, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_200), height=200
+        content=ft.Text(value="Quadruped Controller", size=28, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_200), padding=75
     )
 
-    img_cam  = ft.Image(width=500)
-    img_mat  = ft.Image(width=500)
+    img_cam  = ft.Image(width=500, border_radius= 20)
+    img_mat  = ft.Image(width=500, border_radius= 20)
 
     # Función para actualizar la imagen en tiempo real
     def update_image_cam():
@@ -276,7 +276,7 @@ def interface(page: ft.Page, node: my_node):
                     ], alignment=ft.MainAxisAlignment.SPACE_EVENLY
                 )     
             ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.SPACE_EVENLY, spacing=200
-        ), 
+        ), padding=50
     )
 
     video = ft.Row(

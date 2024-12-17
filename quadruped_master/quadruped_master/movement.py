@@ -96,7 +96,7 @@ def gaits(node: MyNode, f_speed):
 
     time_delay = delay_max - ((abs(f_speed) - min_speed) / (max_speed - min_speed)) * (delay_max - delay_min)
     print("Traslation")
-    plan = dummy_traslation(-length/2, 0, 0, node.node_joint_states, node.motion_params.rotation)
+    plan = dummy_traslation(-length/4, 0, 0, node.node_joint_states, node.motion_params.rotation)
     node.send_joint_states(plan,time_delay)
 
     time.sleep(0.05)
@@ -108,7 +108,7 @@ def gaits(node: MyNode, f_speed):
         plan = gait(2, length, node.node_joint_states)
         node.send_joint_states(plan,time_delay)
 
-        plan = dummy_traslation(4 * length / 2, 0, 0 , node.node_joint_states, node.motion_params.rotation)
+        plan = dummy_traslation( 2*length / 4 + length, 0, 0 , node.node_joint_states, node.motion_params.rotation)
         node.send_joint_states(plan,time_delay)
 
         time.sleep(1)
@@ -123,7 +123,7 @@ def gaits(node: MyNode, f_speed):
         plan = gait(3, length, node.node_joint_states)
         node.send_joint_states(plan,time_delay)
 
-        plan = dummy_traslation(4 * length / 2, 0, 0, node.node_joint_states, node.motion_params.rotation)
+        plan = dummy_traslation(2*length/4 + length, 0, 0, node.node_joint_states, node.motion_params.rotation)
         node.send_joint_states(plan,time_delay)
 
         time.sleep(1)
@@ -133,7 +133,7 @@ def gaits(node: MyNode, f_speed):
         plan = gait(1, length, node.node_joint_states)
         node.send_joint_states(plan,time_delay)
 
-    plan = dummy_traslation(-length/2, 0, 0,node.node_joint_states, node.motion_params.rotation)
+    plan = dummy_traslation(-length/4, 0, 0,node.node_joint_states, node.motion_params.rotation)
     node.send_joint_states(plan,time_delay)
 
 

@@ -114,6 +114,7 @@ def dummy_traslation(x_trasl, z_trasl, angle ,current_pos, current_rot):
     angle = - np.pi*angle/180
     z_rotation = (d)*sin(angle)
     x_rotation = -(d)*(cos(angle)) + d
+    current_rot =  - np.pi*(current_rot*0.5)/180
 
     trans_x = x_trasl*cos(current_rot) - z_trasl*sin(current_rot)
     trans_z = x_trasl*sin(current_rot) + z_trasl*cos(current_rot)

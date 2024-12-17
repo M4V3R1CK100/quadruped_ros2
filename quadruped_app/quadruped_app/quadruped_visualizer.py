@@ -13,10 +13,9 @@ from quadruped_interfaces.msg import MotionParams
 class QuadrupedImagePublisher(Node):
     def __init__(self):
         super().__init__('quadruped_image_publisher')
-        self.subscription = self.create_subscription(
-            JointState, '/joint_goals', self.listener_callback, 10)
-        self.rotation_subscription = self.create_subscription(
-            MotionParams, '/motion_params', self.rotation_callback, 10)
+        self.subscription          = self.create_subscription(JointState, '/joint_goals', self.listener_callback, 10)
+        self.rotation_subscription = self.create_subscription(MotionParams, '/motion_params', self.rotation_callback, 10)
+
         # Publicador de imágenes
         self.publisher = self.create_publisher(Image, '/image_mat_raw', 10)
         self.bridge = CvBridge()
@@ -101,8 +100,9 @@ class QuadrupedImagePublisher(Node):
         # Mejora la estética del gráfico
         self.ax.axis('off')
         self.ax.set_xlim(-1.2, 1.2)
-        self.ax.set_ylim(-1, 0.5)
+        self.ax.set_ylim(-0.9, 0.9)
         self.ax.set_aspect('equal')
+        # self.fig.set_size_inches(6, 6)
 
         # Convierte la gráfica en una imagen
         buf = io.BytesIO()
@@ -114,6 +114,7 @@ class QuadrupedImagePublisher(Node):
         # Publica la imagen como un mensaje de tipo Image
         ros_image = self.bridge.cv2_to_imgmsg(cv_image, encoding='rgba8')
         self.publisher.publish(ros_image)
+        print("published")
         buf.close()
 
 

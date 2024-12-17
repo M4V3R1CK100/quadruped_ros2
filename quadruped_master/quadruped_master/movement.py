@@ -18,7 +18,7 @@ class MyNode(Node):
     def __init__(self):
         super().__init__("movement_node")
         self.get_logger().info("Nodo creado")
-        self.joint_states_pub = self.create_publisher(JointState, 'joint_goals', 10)
+        self.joint_states_pub = self.create_publisher(JointState, '/joint_goals', 10)
         self.motion_sub = self.create_subscription(MotionParams, "motion_params", self.update_motion_params, 10)
         self.motion_params = MotionParams()
         self.rotation = 0.0

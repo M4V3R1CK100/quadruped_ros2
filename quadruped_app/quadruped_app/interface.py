@@ -16,9 +16,9 @@ class my_node(Node):
         
         self.pub                 = self.create_publisher(MotionParams, 'motion_params', 10)
         self.sub_image_cam       = self.create_subscription(String,'/image_bytes_camera',self.listener_image_cam,10)
-        self.sub_image_mat      = self.create_subscription(String, '/image_bytes_mat' ,self.listener_image_mat,10)
+        self.sub_image_mat       = self.create_subscription(String,'/image_bytes_mat' ,self.listener_image_mat,10)
         self.latest_image_camera = None
-        self.latest_image_mat   = None
+        self.latest_image_mat    = None
         self.motion_params       = MotionParams()
 
         self.get_logger().info("Interface Node initialized")
@@ -89,8 +89,8 @@ def interface(page: ft.Page, node: my_node):
         content=ft.Text(value="Quadruped Controller", size=28, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_200), height=200
     )
 
-    img_cam  = ft.Image(width=800, border_radius=ft.border_radius.all(20))
-    img_mat  = ft.Image(width=500, border_radius=ft.border_radius.all(20))
+    img_cam  = ft.Image(width=500)
+    img_mat  = ft.Image(width=500)
 
     # Función para actualizar la imagen en tiempo real
     def update_image_cam():
@@ -102,7 +102,7 @@ def interface(page: ft.Page, node: my_node):
                     img_cam.src_base64 = node.latest_image_camera
                     img_cam.update()
                 except Exception as e:
-                    print(f"Error al actualizar la imagen: {e}")
+                    print(f"Error al actualizar la imagen de camara: {e}")
 
     def update_image_mat():
         while True:
@@ -113,7 +113,7 @@ def interface(page: ft.Page, node: my_node):
                     img_mat.src_base64 = node.latest_image_mat
                     img_mat.update()
                 except Exception as e:
-                    print(f"Error al actualizar la imagen: {e}")
+                    print(f"Error al actualizar la imagen de matplot: {e}")
 
     # Crear un hilo para actualizar imágenes
     image_thread_cam = threading.Thread(target=update_image_cam, daemon=True)
@@ -282,9 +282,9 @@ def interface(page: ft.Page, node: my_node):
     video = ft.Row(
         [
             ft.Container(
-                content=img_cam, padding=0, margin=60,
+                content=img_cam, padding=0, margin=0,
                 border = ft.border.all(10, ft.Colors.WHITE),
-                border_radius= 1.0
+                border_radius= 20
                 
 
             ), 
@@ -293,12 +293,12 @@ def interface(page: ft.Page, node: my_node):
                     ft.FloatingActionButton(icon=ft.icons.HOME_ROUNDED, on_click=home_position, bgcolor=ft.colors.BLUE, text="Home Position", width=150),
                     ft.FloatingActionButton(icon=ft.icons.POWER_SETTINGS_NEW_OUTLINED, on_click=home_position, bgcolor=ft.colors.BLUE, text="Rest Position", width=150),
                     ft.FloatingActionButton(icon=ft.icons.SEND, on_click=send_data, bgcolor=ft.colors.GREEN_700, text="Send Data", width=150),
-                ], width=150, horizontal_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.SPACE_AROUND, expand=True
+                ], width=250, horizontal_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.SPACE_BETWEEN
             ), 
             ft.Container(
-                content=img_mat,padding=0, margin=60,
+                content=img_mat,padding=0, margin=0,
                 border = ft.border.all(10, ft.Colors.WHITE),
-                border_radius= 1.0
+                border_radius= 20
                 
             )
         ], vertical_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.CENTER

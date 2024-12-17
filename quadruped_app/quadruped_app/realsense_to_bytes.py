@@ -10,7 +10,7 @@ class ImagePublisher(Node):
     def __init__(self):
         super().__init__('image_publisher')
         self.subscription = self.create_subscription( Image, '/camera/camera/color/image_raw', self.listener_callback, 10)
-        self.publisher = self.create_publisher(String, '/image_bytes', 10)
+        self.publisher = self.create_publisher(String, '/image_bytes_camera', 10)
         self.bridge = CvBridge()
 
         self.get_logger().info('raw_to_bytes_node initialized')

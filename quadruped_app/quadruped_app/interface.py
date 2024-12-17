@@ -9,6 +9,7 @@ import base64
 from quadruped_interfaces.msg import MotionParams
 import flet as ft
 import threading
+import math
 
 class my_node(Node):
     def __init__(self):
@@ -23,11 +24,12 @@ class my_node(Node):
 
         self.get_logger().info("Interface Node initialized")
 
-        self.speed        = 0.0  # Por ejemplo, velocidad de 1.0 m/s
-        self.rotation     = 0.0  # Por ejemplo, rotación de 0.5 radianes
-        self.traslation_x = 0.0  # Por ejemplo, traslación de 2.0 metros
-        self.traslation_z = 0.0  # Por ejemplo, traslación de 2.0 metros
-        self.motion       = 0.0  # Por ejemplo, traslación de 2.0 metros
+        self.motion_params.speed        = 0.0  # Por ejemplo, velocidad de 1.0 m/s
+        self.motion_params.rotation     = 0.0  # Por ejemplo, rotación de 0.5 radianes
+        self.motion_params.traslation_x = 0.0  # Por ejemplo, traslación de 2.0 metros
+        self.motion_params.traslation_z = 0.0  # Por ejemplo, traslación de 2.0 metros
+        self.motion_params.motion       = 0.0  # Por ejemplo, traslación de 2.0 metros
+        self.motion_params.camera       = 0.0
         self.pub.publish(self.motion_params)
 
 
@@ -37,8 +39,8 @@ class my_node(Node):
     def listener_image_mat(self, msg):
         self.latest_image_mat = msg.data
 
-    def update_params(self, speed, rotation, traslation_x, traslation_z, motion):
-        print(speed, rotation, traslation_x, traslation_z, motion, "Enviado")
+    def update_params(self, speed, rotation, traslation_x, traslation_z, motion, camera):
+        print(speed, rotation, traslation_x, traslation_z, motion, camera, "Enviado")
         # Método para actualizar las variables del nodo
         # Asignar valores a los campos de MotionParams (ajusta según la estructura del mensaje)
         self.motion_params.speed        = speed  # Por ejemplo, velocidad de 1.0 m/s
@@ -46,6 +48,7 @@ class my_node(Node):
         self.motion_params.traslation_x = traslation_x  # Por ejemplo, traslación de 2.0 metros
         self.motion_params.traslation_z = traslation_z  # Por ejemplo, traslación de 2.0 metros
         self.motion_params.motion       = motion  # Por ejemplo, traslación de 2.0 metros
+        self.motion_params.camera       = camera
 
         self.pub.publish(self.motion_params)
 
@@ -78,19 +81,20 @@ def interface(page: ft.Page, node: my_node):
     )
 
 
-    txt_velocity = ft.TextField(value="0%",  read_only=True, text_align=ft.TextAlign.CENTER, width=80 )
-    txt_z_pos    = ft.TextField(value="0.0", read_only=True, text_align=ft.TextAlign.CENTER, width=100, prefix_icon=ft.icons.SWAP_VERT)#label="Z displacement"
-    txt_x_pos    = ft.TextField(value="0.0", read_only=True, text_align=ft.TextAlign.CENTER, width=100, prefix_icon=ft.icons.SWAP_HORIZ_OUTLINED)#label="X displacement"
-    txt_angle    = ft.TextField(value="0°",  read_only=True, text_align=ft.TextAlign.CENTER, width=80)
+    txt_velocity = ft.TextField(value="0%",  read_only=True, text_size=18 ,text_align=ft.TextAlign.CENTER, width=80)
+    txt_z_pos    = ft.TextField(value="0.0", read_only=True, text_size=18 ,text_align=ft.TextAlign.CENTER, width=100, prefix_icon=ft.icons.SWAP_VERT)#label="Z displacement"
+    txt_x_pos    = ft.TextField(value="0.0", read_only=True, text_size=18 ,text_align=ft.TextAlign.CENTER, width=100, prefix_icon=ft.icons.SWAP_HORIZ_OUTLINED)#label="X displacement"
+    txt_angle    = ft.TextField(value="0°",  read_only=True, text_size=18 ,text_align=ft.TextAlign.CENTER, width=80)
+    txt_camera   = ft.TextField(value="0°",  read_only=True, text_size=18 ,text_align=ft.TextAlign.CENTER, width=80)
     global motion
     motion = 0.0
 
     title        = ft.Container(
-        content=ft.Text(value="Quadruped Controller", size=28, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_200), padding=75
+        content=ft.Text(value="Quadruped Controller", size=28, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_200), padding=50
     )
 
-    img_cam  = ft.Image(width=500, border_radius= 20)
-    img_mat  = ft.Image(width=500, border_radius= 20)
+    img_cam  = ft.Image(width=600, border_radius= 15)
+    img_mat  = ft.Image(width=600, border_radius= 15)
 
     # Función para actualizar la imagen en tiempo real
     def update_image_cam():
@@ -193,20 +197,52 @@ def interface(page: ft.Page, node: my_node):
             page.snack_bar = ft.SnackBar(ft.Text(f"The max rotation angle is  {txt_angle.value}", weight=ft.FontWeight.BOLD, size=16, color=ft.colors.WHITE),bgcolor=ft.colors.RED_700)
             page.snack_bar.open = True
             page.update()
+    
+    def minus_click_camera(e):
+        if not(float(txt_camera.value.split("°")[0]) == float(-30)):
+            txt_camera.value = str(round(float(txt_camera.value.split("°")[0]) - 5)) + "°"
+            page.update()
+        else:
+            page.snack_bar = ft.SnackBar(content=ft.Text(f"The min rotation angle for the camera is  {txt_camera.value}", weight=ft.FontWeight.BOLD, size=16, color=ft.colors.WHITE),bgcolor=ft.colors.RED_700)
+            page.snack_bar.open = True
+            page.update()
+
+    def plus_click_camera(e):
+        if not(float(txt_camera.value.split("°")[0]) == float(30)):
+            txt_camera.value = str(round(float(txt_camera.value.split("°")[0]) + 5)) + "°"
+            page.update()
+        else:
+            page.snack_bar = ft.SnackBar(ft.Text(f"The max rotation angle for the camera {txt_camera.value}", weight=ft.FontWeight.BOLD, size=16, color=ft.colors.WHITE),bgcolor=ft.colors.RED_700)
+            page.snack_bar.open = True
+            page.update()
 
     def send_data(e):
         global motion
         page.snack_bar = ft.SnackBar(ft.Text(value=f"The information has been sent", weight=ft.FontWeight.BOLD, size=16, color=ft.colors.WHITE),bgcolor=ft.colors.GREEN_700)
         page.snack_bar.open = True
         page.update()
-        node.update_params((float(txt_velocity.value.split("%")[0]))/100, float(txt_angle.value.split("°")[0]), float(txt_x_pos.value), float(txt_z_pos.value), motion)
+        node.update_params((float(txt_velocity.value.split("%")[0]))/100, float(txt_angle.value.split("°")[0]), float(txt_x_pos.value), float(txt_z_pos.value), motion, math.radians(float(txt_camera.value.split("°")[0])))
 
 
     def home_position(e):
         global motion
-        page.snack_bar = ft.SnackBar(ft.Text(value=f"The information has been sent", weight=ft.FontWeight.BOLD, size=16, color=ft.colors.WHITE),bgcolor=ft.colors.GREEN_700)
-        page.snack_bar.open = True
+        # page.snack_bar = ft.SnackBar(ft.Text(value=f"The information has been sent", weight=ft.FontWeight.BOLD, size=16, color=ft.colors.WHITE),bgcolor=ft.colors.GREEN_700)
+        # page.snack_bar.open = True
         motion = 1.0
+        page.update()
+
+    def rest_position(e):
+        global motion
+        # page.snack_bar = ft.SnackBar(ft.Text(value=f"The information has been sent", weight=ft.FontWeight.BOLD, size=16, color=ft.colors.WHITE),bgcolor=ft.colors.GREEN_700)
+        # page.snack_bar.open = True
+        motion = 0.0
+        page.update()
+
+    def stop_position(e):
+        global motion
+        # page.snack_bar = ft.SnackBar(ft.Text(value=f"The information has been sent", weight=ft.FontWeight.BOLD, size=16, color=ft.colors.WHITE),bgcolor=ft.colors.GREEN_700)
+        # page.snack_bar.open = True
+        motion = 2.0
         page.update()
 
     movement_control = ft.Container(
@@ -214,9 +250,10 @@ def interface(page: ft.Page, node: my_node):
             [
                 ft.Row(
                     [
-                        ft.Text(value = "Gait velocity", size=18, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=180), 
-                        ft.Text(value = "Rotation"     , size=18, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=180),
-                        ft.Text(value = "Traslation"   , size=18, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=180),
+                        ft.Text(value = "Gait velocity", size=24, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=200), 
+                        ft.Text(value = "Rotation"     , size=24, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=200),
+                        ft.Text(value = "Camera"       , size=24, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=200),
+                        ft.Text(value = "Traslation"   , size=24, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=200),
                         
                     ], alignment=ft.MainAxisAlignment.SPACE_EVENLY
                 ),
@@ -227,9 +264,9 @@ def interface(page: ft.Page, node: my_node):
                                 
                                 ft.Row(
                                     [
-                                        ft.IconButton(ft.icons.REMOVE, on_click=minus_click_gait_vel, icon_size=40),
+                                        ft.IconButton(ft.icons.REMOVE, on_click=minus_click_gait_vel, icon_size=60),
                                         txt_velocity,
-                                        ft.IconButton(ft.icons.ADD, on_click=plus_click_gait_vel, icon_size=40),
+                                        ft.IconButton(ft.icons.ADD, on_click=plus_click_gait_vel, icon_size=60),
                                     ], alignment=ft.MainAxisAlignment.CENTER, 
                                 ) 
                             ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, width=200
@@ -241,9 +278,25 @@ def interface(page: ft.Page, node: my_node):
                                     content=(
                                         ft.Row(
                                             [
-                                                ft.IconButton(icon=ft.icons.ROTATE_RIGHT, on_click=minus_click_angle, icon_size=40),
+                                                ft.IconButton(icon=ft.icons.ROTATE_RIGHT, on_click=minus_click_angle, icon_size=60),
                                                 txt_angle, 
-                                                ft.IconButton(icon=ft.icons.ROTATE_LEFT , on_click=plus_click_angle , icon_size=40),
+                                                ft.IconButton(icon=ft.icons.ROTATE_LEFT , on_click=plus_click_angle , icon_size=60),
+                                            ], alignment=ft.MainAxisAlignment.SPACE_EVENLY, 
+                                        )
+                                    ),height=110,
+                                )
+                            ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, width=200
+                        ), 
+                        ft.Column(
+                            [
+                                 
+                                ft.Container(
+                                    content=(
+                                        ft.Row(
+                                            [
+                                                ft.IconButton(icon=ft.icons.ROTATE_RIGHT, on_click=minus_click_camera, icon_size=60),
+                                                txt_camera, 
+                                                ft.IconButton(icon=ft.icons.ROTATE_LEFT , on_click=plus_click_camera , icon_size=60),
                                             ], alignment=ft.MainAxisAlignment.SPACE_EVENLY, 
                                         )
                                     ),height=110,
@@ -276,7 +329,7 @@ def interface(page: ft.Page, node: my_node):
                     ], alignment=ft.MainAxisAlignment.SPACE_EVENLY
                 )     
             ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.SPACE_EVENLY, spacing=200
-        ), padding=50
+        ), padding=50, width=2000
     )
 
     video = ft.Row(
@@ -291,9 +344,10 @@ def interface(page: ft.Page, node: my_node):
             ft.Column(
                 [
                     ft.FloatingActionButton(icon=ft.icons.HOME_ROUNDED, on_click=home_position, bgcolor=ft.colors.BLUE, text="Home Position", width=150),
-                    ft.FloatingActionButton(icon=ft.icons.POWER_SETTINGS_NEW_OUTLINED, on_click=home_position, bgcolor=ft.colors.BLUE, text="Rest Position", width=150),
+                    ft.FloatingActionButton(icon=ft.icons.POWER_SETTINGS_NEW_OUTLINED, on_click=rest_position, bgcolor=ft.colors.BLUE, text="Rest Position", width=150),
+                    ft.FloatingActionButton(icon=ft.icons.DANGEROUS_OUTLINED, on_click=stop_position, bgcolor=ft.colors.RED, text="Stop", width=150),
                     ft.FloatingActionButton(icon=ft.icons.SEND, on_click=send_data, bgcolor=ft.colors.GREEN_700, text="Send Data", width=150),
-                ], width=250, horizontal_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                ], width=250, horizontal_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.SPACE_EVENLY, height=400
             ), 
             ft.Container(
                 content=img_mat,padding=0, margin=0,

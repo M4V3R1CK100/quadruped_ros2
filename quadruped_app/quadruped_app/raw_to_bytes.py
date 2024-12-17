@@ -9,10 +9,10 @@ import base64
 class ImagePublisher(Node):
     def __init__(self):
         super().__init__('image_publisher')
-        self.subscription = self.create_subscription( Image, '/camera_link/image_raw', self.listener_callback, 10)
-        self.subscription = self.create_subscription( Image, '/image_mat_raw', self.mat_listener_callback, 10)
-        self.publisher = self.create_publisher(String, '/image_bytes_camera', 10)
-        self.publisher = self.create_publisher(String, '/image_bytes_mat', 10)
+        self.subscription  = self.create_subscription( Image, '/camera/camera/color/image_raw', self.listener_callback, 10)
+        self.subscription  = self.create_subscription( Image, '/image_mat_raw', self.mat_listener_callback, 10)
+        self.publisher_cam = self.create_publisher   (String, '/image_bytes_camera', 10)
+        self.publisher_mat = self.create_publisher   (String, '/image_bytes_mat', 10)
 
         self.bridge = CvBridge()
 
@@ -22,13 +22,14 @@ class ImagePublisher(Node):
         cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
         _, buffer = cv2.imencode('.jpg', cv_image)
         image_bytes = base64.b64encode(buffer).decode('utf-8')
-        self.publisher.publish(String(data=image_bytes))
+        self.publisher_cam.publish(String(data=image_bytes))
 
     def mat_listener_callback(self, msg):
         cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
         _, buffer = cv2.imencode('.jpg', cv_image)
         image_bytes = base64.b64encode(buffer).decode('utf-8')
-        self.publisher.publish(String(data=image_bytes))
+        self.publisher_mat.publish(String(data=image_bytes))
+        print("mat image")
 
 def main(args=None):
     rclpy.init(args=args)

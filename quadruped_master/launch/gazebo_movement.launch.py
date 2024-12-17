@@ -24,7 +24,7 @@ def generate_launch_description():
         package='quadruped_app',
         executable='interface_node',
         output='screen'
-    )    
+    )
     # Retorna el LaunchDescription
     return launch.LaunchDescription([
         movement_node,

@@ -32,7 +32,6 @@ class MyNode(Node):
         self.joint_states.header.stamp = self.get_clock().now().to_msg()  # Actualiza el timestamp antes de publicar
         self.joint_states.position =  msg.position[1:]  # Posiciones deseadas
         self.publisher.publish(self.joint_states)
-        self.get_logger().info("Trayectoria publicada: %s" % str(msg.position[1:]))
     
 
 def main(args=None):

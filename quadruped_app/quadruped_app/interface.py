@@ -229,6 +229,11 @@ def interface(page: ft.Page, node: my_node):
         # page.snack_bar = ft.SnackBar(ft.Text(value=f"The information has been sent", weight=ft.FontWeight.BOLD, size=16, color=ft.colors.WHITE),bgcolor=ft.colors.GREEN_700)
         # page.snack_bar.open = True
         motion = 1.0
+        txt_velocity.value = "0%"
+        txt_z_pos.value    = "0.0"
+        txt_x_pos.value    = "0.0"
+        txt_angle.value    = "0°"
+        txt_camera.value   = "0°"
         page.update()
 
     def rest_position(e):
@@ -236,6 +241,11 @@ def interface(page: ft.Page, node: my_node):
         # page.snack_bar = ft.SnackBar(ft.Text(value=f"The information has been sent", weight=ft.FontWeight.BOLD, size=16, color=ft.colors.WHITE),bgcolor=ft.colors.GREEN_700)
         # page.snack_bar.open = True
         motion = 0.0
+        txt_velocity.value = "0%"
+        txt_z_pos.value    = "0.0"
+        txt_x_pos.value    = "0.0"
+        txt_angle.value    = "0°"
+        txt_camera.value   = "0°"
         page.update()
 
     def stop_position(e):

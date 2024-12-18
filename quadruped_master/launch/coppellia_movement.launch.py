@@ -24,10 +24,17 @@ def generate_launch_description():
         package='quadruped_app',
         executable='interface_node',
         output='screen'
+    )  
+    
+    server_copplelia_node = Node(
+        package='quadruped_vrep',
+        executable='communication',
+        output='screen'
     )    
     # Retorna el LaunchDescription
     return launch.LaunchDescription([
-        movement_node,
+        # movement_node,
         communication_copplelia_node,
-        interface_node
+        interface_node,
+        server_copplelia_node
     ])

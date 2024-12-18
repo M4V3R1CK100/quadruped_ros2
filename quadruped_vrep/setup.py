@@ -25,7 +25,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'vrep_communication=quadruped_vrep.communication:main'
+            'communication=quadruped_vrep.communication:main'
         ],
     },
 )

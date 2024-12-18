@@ -106,7 +106,6 @@ def gait(foot_number, length, current_pos): #Front foot? True or False
     return positions_plan
 
 def dummy_traslation(x_trasl, z_trasl, angle ,current_pos, current_rot):
-    print("current position: ", current_pos)
 
     #falta revisar la rotacion
 

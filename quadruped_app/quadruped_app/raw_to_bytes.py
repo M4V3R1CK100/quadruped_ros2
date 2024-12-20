@@ -9,7 +9,8 @@ import base64
 class ImagePublisher(Node):
     def __init__(self):
         super().__init__('image_publisher')
-        self.subscription  = self.create_subscription( Image, '/camera/camera/color/image_raw', self.listener_callback, 10)
+        self.subscription  = self.create_subscription( Image, '/camera_link/image_raw', self.listener_callback, 10)
+        # self.subscription  = self.create_subscription( Image, '/camera/camera/color/image_raw', self.listener_callback, 10)
         self.subscription  = self.create_subscription( Image, '/image_mat_raw', self.mat_listener_callback, 10)
         self.publisher_cam = self.create_publisher   (String, '/image_bytes_camera', 10)
         self.publisher_mat = self.create_publisher   (String, '/image_bytes_mat', 10)

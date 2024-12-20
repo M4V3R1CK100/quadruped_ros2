@@ -2,30 +2,105 @@
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <gazebo reference="front_left_d">
+  <gazebo reference="front_left_d"> 
+    <material>
+      <script>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+        <name>Gazebo/Grey</name>
+      </script>
+    </material>
     <mu1>0.20</mu1>
     <mu2>0.20</mu2>
   </gazebo>
 
   <gazebo reference="front_right_d">
+    <material>
+      <script>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+        <name>Gazebo/Grey</name>
+      </script>
+    </material>
     <mu1>0.20</mu1>
     <mu2>0.20</mu2>
   </gazebo>
 
   <gazebo reference="back_right_d">
+    <material>
+      <script>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+        <name>Gazebo/Grey</name>
+      </script>
+    </material>
     <mu1>0.20</mu1>
     <mu2>0.20</mu2>
   </gazebo> 
 
   <gazebo reference="back_left_d">
+    <material>
+      <script>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+        <name>Gazebo/Grey</name>
+      </script>
+    </material>
     <mu1>0.20</mu1>
     <mu2>0.20</mu2>
   </gazebo>
 
   <gazebo reference="body">
+    <material>
+      <script>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+        <name>Gazebo/Grey</name>
+      </script>
+    </material>
     <mu1>0.20</mu1>
     <mu2>0.20</mu2>
   </gazebo>
+
+  <gazebo reference="front_left_u">
+    <material>
+      <script>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+        <name>Gazebo/Grey</name>
+      </script>
+    </material>
+    <mu1>0.20</mu1>
+    <mu2>0.20</mu2>
+  </gazebo>
+
+  <gazebo reference="front_right_u">
+    <material>
+      <script>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+        <name>Gazebo/Grey</name>
+      </script>
+    </material>
+    <mu1>0.20</mu1>
+    <mu2>0.20</mu2>
+  </gazebo>
+
+  <gazebo reference="back_right_u">
+    <material>
+      <script>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+        <name>Gazebo/Grey</name>
+      </script>
+    </material>
+    <mu1>0.20</mu1>
+    <mu2>0.20</mu2>
+  </gazebo>
+
+  <gazebo reference="back_left_u">
+    <material>
+      <script>
+        <uri>file://media/materials/scripts/gazebo.material</uri>
+        <name>Gazebo/Grey</name>
+      </script>
+    </material>
+    <mu1>0.20</mu1>
+    <mu2>0.20</mu2>
+  </gazebo>
+  
 
   <gazebo reference="front_left_d_contact_link">
     <mu1>1.0</mu1>

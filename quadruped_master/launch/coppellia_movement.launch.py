@@ -30,7 +30,7 @@ def generate_launch_description():
         package='quadruped_vrep',
         executable='communication',
         output='screen'
-    )    
+    )
     # Retorna el LaunchDescription
     return launch.LaunchDescription([
         # movement_node,

@@ -42,8 +42,8 @@ def generate_launch_description():
     launch_gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('gazebo_ros'), 'launch', 'gazebo.launch.py')
-        )
-        # launch_arguments={'world': world_path, 'verbose': 'true'}.items()
+        ),
+        launch_arguments={'world': world_path, 'verbose': 'true'}.items()
     )
     # entity spawn node (to spawn the robot from the /robot_description topic)
     node_spawn_entity = Node(package='gazebo_ros', executable='spawn_entity.py',

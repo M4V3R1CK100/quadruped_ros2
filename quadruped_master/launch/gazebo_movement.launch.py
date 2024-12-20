@@ -25,8 +25,22 @@ def generate_launch_description():
         executable='interface_node',
         output='screen'
     )
+    quadruped_visualizer = Node(
+        package='quadruped_app',
+        executable='quadruped_visualizer_node',
+        output='screen'
+    )
+
+    raw_to_bytes = Node(
+        package='quadruped_app',
+        executable='raw_to_bytes_node',
+        output='screen'
+    )
+
     # Retorna el LaunchDescription
     return launch.LaunchDescription([
+        quadruped_visualizer,
+        raw_to_bytes,
         movement_node,
         communication_gazebo_node,
         interface_node

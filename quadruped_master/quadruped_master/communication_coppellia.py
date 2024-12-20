@@ -18,7 +18,6 @@ class MyNode(Node):
         self.get_logger().info("Nodo creado")
         self.joint_goals_sub = self.create_subscription(JointState, 'joint_goals',self.send_joint_trajectory, 10)
         self.publisher = self.create_publisher(JointState, 'joint_states', 10)
-        
         self.joint_states = JointState()
         self.joint_states.position = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ]
         self.joint_states.header = Header()

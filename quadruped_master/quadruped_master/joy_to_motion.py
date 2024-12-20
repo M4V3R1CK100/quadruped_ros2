@@ -49,7 +49,6 @@ class Joy_Control(Node):
                                              (round(self.motion_quadruped.camera, 1) - math.radians(10) if ((msg.axes[4]==-1) and (self.motion_quadruped.camera > -math.radians(30))) else 
                                               round(self.motion_quadruped.camera, 1)))
         
-        print(msg.axes[4]==-1)
 
         # self.motion_quadruped.speed        = 0.1 if (msg.buttons[1]) else (-0.1 if (msg.buttons[3]) else 0.0)
         # self.motion_quadruped.rotation     = 0.1 if (msg.buttons[2]) else (-0.1 if (msg.buttons[0]) else 0.0)
@@ -58,7 +57,8 @@ class Joy_Control(Node):
         # self.motion_quadruped.motion       = self.motion_quadruped.motion
 
 
-        self.get_logger().info(str(self.motion_quadruped))        
+        #self.get_logger().info(str(self.motion_quadruped))        
+        print(str(self.motion_quadruped))
 
         if (msg.buttons[10]):
             self.motion_publisher_.publish(self.motion_quadruped)

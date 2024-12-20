@@ -7,7 +7,7 @@ import cv2
 class ImageSubscriber(Node):
     def __init__(self):
         super().__init__('image_subscriber')
-        self.subscription = self.create_subscription(Image,'/image_mat_raw', self.listener_callback,10)
+        self.subscription = self.create_subscription(Image,'/camera_link/image_raw', self.listener_callback,10)
         self.bridge = CvBridge()
 
     def listener_callback(self, msg):

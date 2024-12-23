@@ -13,7 +13,7 @@ from quadruped_interfaces.msg import MotionParams
 class QuadrupedImagePublisher(Node):
     def __init__(self):
         super().__init__('quadruped_image_publisher')
-        self.subscription          = self.create_subscription(JointState, '/joint_states', self.listener_callback, 10)
+        self.subscription          = self.create_subscription(JointState, '/joint_goals', self.listener_callback, 10)
         self.rotation_subscription = self.create_subscription(MotionParams, '/motion_params', self.rotation_callback, 10)
 
         # Publicador de imágenes

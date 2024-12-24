@@ -44,8 +44,9 @@ class QuadrupedImagePublisher(Node):
     
     def apply_rotation(self, x, y):
         """Aplica una rotación 2D a las coordenadas."""
-        cos_theta = np.cos(self.rotation_angle)
-        sin_theta = np.sin(self.rotation_angle)
+        rot = (np.pi*(self.rotation_angle)/180)*0.5
+        cos_theta = np.cos(rot)
+        sin_theta = np.sin(rot)
         x_rotated = cos_theta * x - sin_theta * y
         y_rotated = sin_theta * x + cos_theta * y
         return x_rotated, y_rotated

@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 import rclpy
-import sys
 import threading
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Header
-import math
 from math import pi, cos, sin, acos, atan2
 from rclpy.node import Node
 import time
 from quadruped_master.gait_functions import *
 from quadruped_interfaces.msg import MotionParams
+from rclpy.executors import MultiThreadedExecutor
+import asyncio
 
 global quit
 quit = 0
@@ -27,9 +27,6 @@ class MyNode(Node):
         self.traslz = 0.0
         self.speed = 0.0
         self.camera = 0.0
-        
-        self.is_executing = False   # Bandera para controlar la ejecución de gaits()
-
 
         #Joint states del nodo
         self.node_joint_states = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -40,59 +37,64 @@ class MyNode(Node):
         self.joint_states.name = ['camera_joint','front_right_joint1', 'front_right_joint2', 'front_left_joint1', 'front_left_joint2', 
                                   'back_left_joint1', 'back_left_joint2','back_right_joint1', 'back_right_joint2']
         
-        # Timer para procesar movimientos a intervalos regulares
-        self.timer = self.create_timer(0.1, self.process_movement)
+        # Tarea de procesamiento de movimiento
+        self.process_task = asyncio.create_task(self.process_movement()) 
         self.joint_states.header.stamp = self.get_clock().now().to_msg()
         self.joint_states_pub.publish(self.joint_states)
 
     def update_motion_params(self, msg):
-        print(msg)
+        print(str(msg.motion))
         self.motion_params = msg
         self.speed = self.motion_params.speed
-
-    def process_movement(self):
-        """Controla el procesamiento del movimiento basado en los parámetros actuales."""
-        # Si ya se está ejecutando un movimiento, no hacer nada
-        if self.is_executing:
-            return
-
-        if self.motion_params.motion == 2:
-            self.get_logger().info("Paro de emergencia detectado.")
-            return
-
-        if self.motion_params.motion != self.motion:
-            # Cambió el tipo de movimiento
-            if self.motion_params.motion == 0.0:
-                rest(self)
-            elif self.motion_params.motion == 1.0:
-                initial_position(self)
-            self.motion = self.motion_params.motion
-
-        # Ejecutar gaits si la velocidad es distinta de 0
-        if self.motion_params.motion == 1.0 and self.speed != 0.0:
-            self.is_executing = True  # Marcar que estamos ejecutando
-            gaits(self, self.speed)
-            self.is_executing = False  # Liberar bandera al finalizar
-
-        elif self.motion_params.traslation_x != self.traslx or self.motion_params.traslation_z != self.traslz or self.motion_params.rotation!= self.rotation:
-            plan = dummy_traslation(self.motion_params.traslation_x-self.traslx, self.motion_params.traslation_z-self.traslz,self.motion_params.rotation - self.rotation, self.node_joint_states, self.rotation)
-            self.rotation = self.motion_params.rotation 
-            self.traslx = self.motion_params.traslation_x
-            self.traslz = self.motion_params.traslation_z
-            self.send_joint_states(plan, 0.2)
         
-        if self.motion_params.camera!=self.camera:
-            self.camera = self.motion_params.camera
-            new_joints = self.node_joint_states
-            new_joints[0] = self.camera
-            self.publish_joint_states(new_joints)
+
+    async def process_movement(self):
+        """Controla el procesamiento del movimiento basado en los parámetros actuales."""
+        while rclpy.ok():
+            if self.motion_params.motion == 2:
+                continue
+            
+            # Cambia el tipo de movimiento
+            if self.motion_params.motion != self.motion:
+                # Cambió el tipo de movimiento
+                if self.motion_params.motion == 0.0:
+                    print("Rest esta ejecutandose")
+                    rest(self)
+                elif self.motion_params.motion == 1.0:
+                    print("Initial pos esta ejecutandose")
+                    initial_position(self)
+                self.motion = self.motion_params.motion
+
+            # Ejecutar gaits si la velocidad es distinta de 0
+            if self.motion_params.motion == 1.0 and self.speed != 0.0:
+                print("Gait esta ejecutandose")
+                gaits(self, self.speed)
+
+            elif self.motion_params.traslation_x != self.traslx or self.motion_params.traslation_z != self.traslz or self.motion_params.rotation!= self.rotation:
+                plan = dummy_traslation(self.motion_params.traslation_x-self.traslx, self.motion_params.traslation_z-self.traslz,self.motion_params.rotation - self.rotation, self.node_joint_states, self.rotation)
+                self.rotation = self.motion_params.rotation 
+                self.traslx = self.motion_params.traslation_x
+                self.traslz = self.motion_params.traslation_z
+                print("Traslation esta ejecutandose")
+                self.send_joint_states(plan, 0.2)
+            
+            if self.motion_params.camera!=self.camera:
+                print("Camera esta ejecutandose")
+                self.camera = self.motion_params.camera
+                new_joints = self.node_joint_states
+                new_joints[0] = self.camera
+                self.publish_joint_states(new_joints)
+            
+            # Esperar antes de verificar nuevamente
+            await asyncio.sleep(0.1)
 
     def send_joint_states(self, joint_goals_list, time_delay):
         for goals in joint_goals_list:
             self.node_joint_states = goals
             self.joint_states.position = goals
             self.joint_states.header.stamp = self.get_clock().now().to_msg()  # Actualiza el timestamp antes de publicar
-            self.joint_states_pub.publish(self.joint_states)
+            if self.motion!=2:
+                self.joint_states_pub.publish(self.joint_states)
             time.sleep(time_delay)
 
     def publish_joint_states(self, joint_positions: list):
@@ -169,13 +171,23 @@ def gaits(node: MyNode, f_speed):
     node.send_joint_states(plan,time_delay)
 
 
-def main(args=None):
-    rclpy.init(args=args)
+async def main_async():
+    rclpy.init()
     movement_node = MyNode()
 
-    rclpy.spin(movement_node)
+    executor = MultiThreadedExecutor()
+    executor.add_node(movement_node)
 
-    rclpy.shutdown()
+    try:
+        # Ejecuta el loop de ROS2 dentro del loop de asyncio
+        await asyncio.get_running_loop().run_in_executor(None, executor.spin)
+    finally:
+        movement_node.destroy_node()
+        rclpy.shutdown()
+
+
+def main():
+    asyncio.run(main_async())
 
 if __name__ == '__main__':
     main()

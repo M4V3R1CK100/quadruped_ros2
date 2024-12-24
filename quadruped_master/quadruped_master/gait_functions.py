@@ -112,7 +112,8 @@ def dummy_traslation(x_trasl, z_trasl, angle ,current_pos, current_rot):
     d = 0.22 #Distancia del dummy entra pata y pata
     angle = - np.pi*angle/180
     z_rotation = (d)*sin(angle)
-    x_rotation = -(d)*(cos(angle)) + d
+    x_rotation = -(d -(d)*(cos(angle)))
+    print(x_rotation,z_rotation)
     current_rot =  - np.pi*(current_rot*0.5)/180
 
     trans_x = x_trasl*cos(current_rot) - z_trasl*sin(current_rot)
@@ -133,16 +134,18 @@ def dummy_traslation(x_trasl, z_trasl, angle ,current_pos, current_rot):
         n = 2*i +1      #+1 es porque queremos evitar el 1er joint que es la camara
         base_new_arm = angles_new_arm(current_pos[n],current_pos[n+1])
         point_new_arm = FK(base_new_arm[0],base_new_arm[1],False)
+        print(point_new_arm)
 
         pre_position[i] = point_new_arm 
 
         if i >= 2:
             new_x_trasl = -trans_x
         else:
-            new_x_rot = -x_rotation
+            #REVISAR
             new_z_rot = -z_rotation
 
-        new_point = (point_new_arm[0]+ new_x_trasl+ new_x_rot, point_new_arm[1]+ trans_z + new_z_rot)
+        new_point = (point_new_arm[0]+ new_x_trasl + new_x_rot, point_new_arm[1]+ trans_z + new_z_rot)
+        print(new_point)
         final_position[i] = new_point
 
     steps = 10
@@ -165,6 +168,8 @@ def dummy_traslation(x_trasl, z_trasl, angle ,current_pos, current_rot):
     return positions_plan
 
 if __name__ == "__main__":
+    # stand_1=0.3
+    # stand_2=1.4
     # Coloca aquí cualquier código de prueba o de ejecución que no desees que se ejecute al importar.
     print("Este mensaje solo aparece cuando ejecutas gait_functions directamente.")
-
+    # dummy_traslation(0,0,30,[0.0, stand_1, stand_2,stand_1,stand_2,stand_1,stand_2,stand_1,stand_2],0)

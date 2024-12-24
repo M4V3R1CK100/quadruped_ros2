@@ -81,12 +81,12 @@ private:
             simxFinish(clientID);
         }
 
-        float position[3];
-        if (simxGetObjectPosition(clientID, quadrupedHandle, -1, position, simx_opmode_blocking) == simx_return_ok) {
-            RCLCPP_INFO(this->get_logger(), "Posición del quadruped: x = %f, y = %f, z = %f", position[0], position[1], position[2]);
-        } else {
-            RCLCPP_ERROR(this->get_logger(), "No se pudo obtener la posición del objeto 'quadruped'");
-        }
+        // float position[3];
+        // if (simxGetObjectPosition(clientID, quadrupedHandle, -1, position, simx_opmode_blocking) == simx_return_ok) {
+        //     RCLCPP_INFO(this->get_logger(), "Posición del quadruped: x = %f, y = %f, z = %f", position[0], position[1], position[2]);
+        // } else {
+        //     RCLCPP_ERROR(this->get_logger(), "No se pudo obtener la posición del objeto 'quadruped'");
+        // }
     }
 };
 

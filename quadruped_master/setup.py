@@ -29,7 +29,9 @@ setup(
             'test_mov= quadruped_master.test_mov:main',
             'joy_to_motion_node=quadruped_master.joy_to_motion:main',
             'communication_gazebo_node= quadruped_master.communication_gazebo:main',
-            'communication_copplelia_node= quadruped_master.communication_coppellia:main'
+            'communication_copplelia_node= quadruped_master.communication_coppellia:main', 
+            'vrep_communication= quadruped_master.vrep_communication:main', 
+            
         ],
     },
 )

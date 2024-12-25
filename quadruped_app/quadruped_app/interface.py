@@ -226,8 +226,6 @@ def interface(page: ft.Page, node: my_node):
 
     def home_position(e):
         global motion
-        # page.snack_bar = ft.SnackBar(ft.Text(value=f"The information has been sent", weight=ft.FontWeight.BOLD, size=16, color=ft.colors.WHITE),bgcolor=ft.colors.GREEN_700)
-        # page.snack_bar.open = True
         motion = 1.0
         txt_velocity.value = "0%"
         txt_z_pos.value    = "0.0"
@@ -238,8 +236,6 @@ def interface(page: ft.Page, node: my_node):
 
     def rest_position(e):
         global motion
-        # page.snack_bar = ft.SnackBar(ft.Text(value=f"The information has been sent", weight=ft.FontWeight.BOLD, size=16, color=ft.colors.WHITE),bgcolor=ft.colors.GREEN_700)
-        # page.snack_bar.open = True
         motion = 0.0
         txt_velocity.value = "0%"
         txt_z_pos.value    = "0.0"
@@ -250,8 +246,6 @@ def interface(page: ft.Page, node: my_node):
 
     def stop_position(e):
         global motion
-        # page.snack_bar = ft.SnackBar(ft.Text(value=f"The information has been sent", weight=ft.FontWeight.BOLD, size=16, color=ft.colors.WHITE),bgcolor=ft.colors.GREEN_700)
-        # page.snack_bar.open = True
         motion = 2.0
         page.update()
 

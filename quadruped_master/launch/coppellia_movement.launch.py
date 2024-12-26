@@ -25,12 +25,6 @@ def generate_launch_description():
         executable='interface_node',
         output='screen'
     )  
-    
-    server_copplelia_node = Node(
-        package='quadruped_vrep',
-        executable='communication',
-        output='screen'
-    )
 
     quadruped_visualizer = Node(
         package='quadruped_app',
@@ -50,6 +44,5 @@ def generate_launch_description():
         raw_to_bytes,
         quadruped_visualizer,
         communication_copplelia_node,
-        interface_node,
-        server_copplelia_node
+        interface_node
     ])

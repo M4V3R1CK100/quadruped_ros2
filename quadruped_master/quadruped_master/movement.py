@@ -131,8 +131,8 @@ def gaits(node: MyNode, f_speed):
         length = -length
 
     time_delay = delay_max - ((abs(f_speed) - min_speed) / (max_speed - min_speed)) * (delay_max - delay_min)
-    plan = dummy_traslation(-length/4, 0, 0, node.node_joint_states, node.motion_params.rotation)
-    node.send_joint_states(plan,time_delay)
+    plan = dummy_traslation(-length/6, 0, 0, node.node_joint_states, node.motion_params.rotation)
+    node.send_joint_states(plan,time_delay/2)
 
     time.sleep(0.05)
     if f_speed > 0:  # Cuando Avanza
@@ -142,14 +142,15 @@ def gaits(node: MyNode, f_speed):
         plan = gait(2, length, node.node_joint_states)
         node.send_joint_states(plan,time_delay)
 
-        plan = dummy_traslation( 2*length / 4 + length, 0, 0 , node.node_joint_states, node.motion_params.rotation)
-        node.send_joint_states(plan,time_delay)
+        plan = dummy_traslation( 2*length /6 + length, 0, 0 , node.node_joint_states, node.motion_params.rotation)
+        node.send_joint_states(plan,time_delay/2)
 
         time.sleep(1)
         plan = gait(3, length, node.node_joint_states)
         node.send_joint_states(plan,time_delay)
         plan = gait(4, length, node.node_joint_states)
         node.send_joint_states(plan,time_delay)
+
     if f_speed < 0:  # Cuando retrocede
         plan = gait(4, length, node.node_joint_states)
         node.send_joint_states(plan,time_delay)
@@ -157,8 +158,8 @@ def gaits(node: MyNode, f_speed):
         plan = gait(3, length, node.node_joint_states)
         node.send_joint_states(plan,time_delay)
 
-        plan = dummy_traslation(2*length/4 + length, 0, 0, node.node_joint_states, node.motion_params.rotation)
-        node.send_joint_states(plan,time_delay)
+        plan = dummy_traslation(2*length/6 + length, 0, 0, node.node_joint_states, node.motion_params.rotation)
+        node.send_joint_states(plan,time_delay/2)
 
         time.sleep(1)
         plan = gait(2, length, node.node_joint_states)
@@ -167,8 +168,8 @@ def gaits(node: MyNode, f_speed):
         plan = gait(1, length, node.node_joint_states)
         node.send_joint_states(plan,time_delay)
 
-    plan = dummy_traslation(-length/4, 0, 0,node.node_joint_states, node.motion_params.rotation)
-    node.send_joint_states(plan,time_delay)
+    plan = dummy_traslation(-length/6, 0, 0,node.node_joint_states, node.motion_params.rotation)
+    node.send_joint_states(plan,time_delay/2)
 
 
 async def main_async():

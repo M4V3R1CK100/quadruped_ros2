@@ -14,7 +14,6 @@ class Vrep_Communication(Node):
         self.get_logger().info(f"{name} creado")
         self.joint_subscription = self.create_subscription(JointState, '/joint_goals', self.listener_callback, 10)
         self.publisher_vrep_cam = self.create_publisher(Image, '/camera_link/image_raw', 10)
-        self.scriptHandle = self.sim.getObject('/moveJoints')
 
         # Handles
         self.joint_handles = []
@@ -22,6 +21,7 @@ class Vrep_Communication(Node):
         # Crear cliente y conectarse al servidor
         self.client = RemoteAPIClient()
         self.sim = self.client.getObject('sim')
+        self.scriptHandle = self.sim.getObject('/moveJoints')
 
         try:
             # Comprobar conexión
@@ -37,7 +37,7 @@ class Vrep_Communication(Node):
     def listener_callback(self, msg: JointState):
 
         # Llamar a la función del script en CoppeliaSim
-        success = self.sim.callScriptFunction('sysCall_joint', self.scriptHandle, msg._position)
+        success = self.sim.callScriptFunction('sysCall_joint', self.scriptHandle, list(msg._position))
 
     def camera_vision(self):
         sensor1Handle = self.sim.getObject('/camera')

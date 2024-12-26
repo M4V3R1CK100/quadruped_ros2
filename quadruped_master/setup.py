@@ -31,7 +31,7 @@ setup(
             'communication_gazebo_node= quadruped_master.communication_gazebo:main',
             'communication_copplelia_node= quadruped_master.communication_coppellia:main', 
             'vrep_communication= quadruped_master.vrep_communication:main', 
-            
+            '2vrep_communication= quadruped_master.vrep_communication2:main', 
         ],
     },
 )

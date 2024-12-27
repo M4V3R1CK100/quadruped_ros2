@@ -29,33 +29,33 @@ from dynamixel_sdk import *                    # Uses Dynamixel SDK library
 
 # Control table address
 #READ AND WRITE
-ADDR_PRO_ACCELERATION_LIMIT = 40
-ADDR_PRO_VELOCITY_LIMIT     = 44
-ADDR_PRO_TORQUE_ENABLE      = 64               # Control table address is different in Dynamixel model
-ADDR_PRO_LED                = 65
-ADDR_PRO_POSITION_D_GAIN    = 80
-ADDR_PRO_POSITION_I_GAIN    = 82
-ADDR_PRO_POSITION_P_GAIN    = 84
+ADDR_PRO_ACCELERATION_LIMIT   = 40
+ADDR_PRO_VELOCITY_LIMIT       = 44
+ADDR_PRO_TORQUE_ENABLE        = 64               # Control table address is different in Dynamixel model
+ADDR_PRO_LED                  = 65
+ADDR_PRO_POSITION_D_GAIN      = 80
+ADDR_PRO_POSITION_I_GAIN      = 82
+ADDR_PRO_POSITION_P_GAIN      = 84
 
-ADDR_PRO_GOAL_VELOCITY      = 104
+ADDR_PRO_GOAL_VELOCITY        = 104
 ADDR_PRO_PROFILE_ACCELERATION = 108
-ADDR_PRO_PROFILE_VELOCITY   = 112
-ADDR_PRO_GOAL_POSITION      = 116
+ADDR_PRO_PROFILE_VELOCITY     = 112
+ADDR_PRO_GOAL_POSITION        = 116
 
 #ONLY READ
-ADDR_PRO_PRESENT_VELOCITY   = 128
-ADDR_PRO_PRESENT_POSITION   = 132
-ADDR_PRO_PRESENT_TEMPERATURE= 146
+ADDR_PRO_PRESENT_VELOCITY     = 128
+ADDR_PRO_PRESENT_POSITION     = 132
+ADDR_PRO_PRESENT_TEMPERATURE  = 146
 
 # Protocol version
-PROTOCOL_VERSION            = 2.0               # See which protocol version is used in the Dynamixel
+PROTOCOL_VERSION              = 2.0               # See which protocol version is used in the Dynamixel
 # Default setting
-DXL_ID0                      = [1,2,5,6]                 # Dynamixel ID : 1
-DXL_ID1                      = [3,4,7,8]
-DXL_ID                      = [1,2,3,4,5,6,7,8]
+DXL_ID0                       = [1,2,5,6]                 # Dynamixel ID : 1
+DXL_ID1                       = [3,4,7,8]
+DXL_ID                        = [1,2,3,4,5,6,7,8]
 
 # BAUDRATE                    = 1000000             # Dynamixel default baudrate : 57600
-BAUDRATE                    = 57600
+BAUDRATE                      = 57600
 
 
 DEVICENAME0                 = '/dev/ttyUSB0'    # Check which port is being used on your controller

@@ -7,6 +7,15 @@
   <maintainer email="eridamen@espol.edu.ec">erick</maintainer>
   <license>TODO: License declaration</license>
 
+  <depend>rclpy</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>dynamixel_sdk</depend>
+  
+  <depend>trajectory_msgs</depend>
+  <depend>controller_manager</depend>
+  <depend>joint_trajectory_controller</depend>
+  
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>

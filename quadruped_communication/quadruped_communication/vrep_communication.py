@@ -57,8 +57,8 @@ class Vrep_Communication(Node):
                 msg = Image()
                 msg.header.stamp = self.get_clock().now().to_msg()
                 msg.header.frame_id = 'camera_link'
-                msg.height = resolution[1]
-                msg.width = resolution[0]
+                msg.height = 600/1.3
+                msg.width = 600
                 msg.encoding = 'rgb8'
                 msg.is_bigendian = False
                 msg.step = 3 * resolution[0]

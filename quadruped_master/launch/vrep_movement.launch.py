@@ -37,18 +37,19 @@ def generate_launch_description():
         condition = UnlessCondition(joy)
     )  
 
-    quadruped_visualizer = Node(
+    quadruped_visualizer_node = Node(
         package='quadruped_app',
         executable='quadruped_visualizer_node',
         output='screen',
         condition = UnlessCondition(joy)
     )
 
-    raw_to_bytes = Node(
+    raw_to_bytes_node = Node(
         package='quadruped_app',
         executable='raw_to_bytes_node',
         output='screen',
-        condition = UnlessCondition(joy)
+        condition = UnlessCondition(joy),
+        parameters=[{'camera_topic': '/camera_link/image_raw'}],
     )
 
     joy_node = Node(
@@ -80,8 +81,8 @@ def generate_launch_description():
         vrep_communication_node,
 
         interface_node,
-        quadruped_visualizer,
-        raw_to_bytes,
+        quadruped_visualizer_node,
+        raw_to_bytes_node,
         joy_node,
         joy_to_motion_node,
         image_node,

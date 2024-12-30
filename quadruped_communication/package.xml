@@ -4,22 +4,19 @@
   <name>quadruped_communication</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
-  <maintainer email="eridamen@espol.edu.ec">erick</maintainer>
-  <license>TODO: License declaration</license>
+  <maintainer email="jumasaet@espol.edu.ec">john</maintainer>
+  <license>Apache-2.0</license>
 
   <depend>rclpy</depend>
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
-  <depend>dynamixel_sdk</depend>
-  
-  <depend>trajectory_msgs</depend>
-  <depend>controller_manager</depend>
-  <depend>joint_trajectory_controller</depend>
-  
+
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
   <test_depend>python3-pytest</test_depend>
+
+  <exec_depend>dynamixel_sdk</exec_depend>
 
   <export>
     <build_type>ament_python</build_type>

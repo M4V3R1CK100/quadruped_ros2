@@ -11,7 +11,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
     ],
-    install_requires=['setuptools'],
+    install_requires=['setuptools','dynamixel_sdk'],
     zip_safe=True,
     maintainer='john',
     maintainer_email='jumasaet@espol.edu.ec',
@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'dynamixel_communication=quadruped_communication.u2d2_communication_r2.py:main',
+            'dynamixel_communication=quadruped_communication.u2d2_communication_r2:main',
             'vrep_communication= quadruped_communication.vrep_communication:main', 
 
         ],

@@ -57,8 +57,8 @@ class Vrep_Communication(Node):
                 msg = Image()
                 msg.header.stamp = self.get_clock().now().to_msg()
                 msg.header.frame_id = 'camera_link'
-                msg.height = 600/1.3
-                msg.width = 600
+                msg.height = resolution[1]
+                msg.width = resolution[0]
                 msg.encoding = 'rgb8'
                 msg.is_bigendian = False
                 msg.step = 3 * resolution[0]
@@ -68,7 +68,7 @@ class Vrep_Communication(Node):
             except Exception as e:
                 self.get_logger().error(f"Error al procesar la imagen: {e}")
 
-        self.create_timer(0.05, publish_image)
+        self.create_timer(0.1, publish_image)
 
 
 def main(args=None):

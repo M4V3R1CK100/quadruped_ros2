@@ -6,7 +6,8 @@ from sensor_msgs.msg import JointState
 from sensor_msgs.msg import Image
 import rclpy
 from rclpy.node import Node
-
+import cv2
+import numpy as np
 
 class Vrep_Communication(Node):
     def __init__(self, name):
@@ -53,16 +54,36 @@ class Vrep_Communication(Node):
                 if image is None or resolution is None:
                     self.get_logger().warn("No se pudo obtener imagen del sensor.")
                     return
+                
+                # Convertir los datos binarios a array de bytes
+                if isinstance(image, bytes):
+                    img_bytes = np.frombuffer(image, dtype=np.uint8)
+                else:
+                    img_bytes = np.array(image, dtype=np.uint8)
 
+                # Reshape considerando que los datos están en formato RGB
+                try:
+                    img_array = img_bytes.reshape((resolution[1], resolution[0], 3))
+                except ValueError as e:
+                    self.get_logger().error(f"Error al reshape de la imagen: {e}")
+                    self.get_logger().info(f"Tamaño del buffer: {len(img_bytes)}, Resolución esperada: {resolution}")
+                    return
+                # Redimensionar la imagen
+                desired_width = 600
+                desired_height = 450
+                img_resized = cv2.resize(img_array, (desired_width, desired_height), 
+                                    interpolation=cv2.INTER_LINEAR)
+
+                # Crear mensaje ROS
                 msg = Image()
                 msg.header.stamp = self.get_clock().now().to_msg()
                 msg.header.frame_id = 'camera_link'
-                msg.height = resolution[1]
-                msg.width = resolution[0]
+                msg.height = desired_height
+                msg.width = desired_width
                 msg.encoding = 'rgb8'
                 msg.is_bigendian = False
-                msg.step = 3 * resolution[0]
-                msg.data = list(image)
+                msg.step = 3 * desired_width
+                msg.data = img_resized.tobytes()  # Usar tobytes() en lugar de list()
 
                 self.publisher_vrep_cam.publish(msg)
             except Exception as e:

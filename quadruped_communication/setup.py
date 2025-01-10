@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'dynamixel_communication=quadruped_communication.u2d2_communication_r2:main',
+            'dynamixel_communication=quadruped_communication.u2d2_communication:main',
             'vrep_communication= quadruped_communication.vrep_communication:main', 
 
         ],

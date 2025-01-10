@@ -42,13 +42,13 @@ class DynamixelMotors(Node):
         # Default setting
         self.DXL_ID0                      = [1,2,5,6]                 # Dynamixel ID : 1
         self.DXL_ID1                      = [3,4,7,8]
-        self.DXL_ID                      = [1,2,3,4,5,6,7,8]
+        self.DXL_ID                       = [1,2,3,4,5,6,7,8]
 
         # BAUDRATE                    = 1000000             # Dynamixel default baudrate : 57600
         self.BAUDRATE                    = 57600
 
-        self.DEVICENAME0                 = '/dev/ttyUSB1'    # Check which port is being used on your controller
-        self.DEVICENAME1                 = '/dev/ttyUSB0'    # ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
+        self.DEVICENAME0                 = '/dev/ttyUSB0'    # Check which port is being used on your controller
+        self.DEVICENAME1                 = '/dev/ttyUSB1'    # ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
 
         # Initialize PortHandler instance
         # Set the port path
@@ -57,6 +57,7 @@ class DynamixelMotors(Node):
         self.portHandler1 = PortHandler(self.DEVICENAME1)
         self.packetHandler = PacketHandler(self.PROTOCOL_VERSION)
 
+        self.theta0=0
         self.theta1=0
         self.theta2=0
         self.theta3=0
@@ -65,6 +66,8 @@ class DynamixelMotors(Node):
         self.theta6=0
         self.theta7=0
         self.theta8=0
+
+        # self.create_timer(1, self.read_positions)
 
     def comunication(self, n: int = 2):
         """
@@ -75,7 +78,7 @@ class DynamixelMotors(Node):
         """
         def setup_port(portHandler: PortHandler, dxl_ids: list):
             if portHandler.openPort():
-                self.get_logger().info("Succeeded to open the port")
+                self.get_logger().info("Succeeded to open the port HOLA")
             else:
                 self.get_logger().error("Failed to open the port")
 
@@ -87,7 +90,7 @@ class DynamixelMotors(Node):
             for i in dxl_ids:
                 dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(portHandler, i, self.ADDR_PRO_TORQUE_ENABLE, 0)
                 if dxl_comm_result != COMM_SUCCESS:
-                    self.get_logger().error(f"Error {self.packetHandler.getTxRxResult(dxl_comm_result)} on Dynamixel {i}")
+                    self.get_logger().error(f"Error j{self.packetHandler.getTxRxResult(dxl_comm_result)} on Dynamixel {i}")
                 elif dxl_error != 0:
                     self.get_logger().error(f"Packet error {self.packetHandler.getRxPacketError(dxl_error)} on Dynamixel {i}")
                 else:
@@ -178,10 +181,10 @@ class DynamixelMotors(Node):
         set_A_PRFL = 10
         set_V_PRFL = 10
         for i in self.DXL_ID0:
-            dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, self.DXL1_ID, self.ADDR_PRO_VELOCITY_LIMIT, int(set_V_l))
-            dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, self.DXL1_ID, self.ADDR_PRO_ACCELERATION_LIMIT, int(set_A_l))
-            dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, self.DXL1_ID, self.ADDR_PRO_PROFILE_ACCELERATION, int(set_A_PRFL))
-            dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, self.DXL1_ID, self.ADDR_PRO_PROFILE_VELOCITY, int(set_V_PRFL))    
+            dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, i, self.ADDR_PRO_VELOCITY_LIMIT, int(set_V_l))
+            dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, i, self.ADDR_PRO_ACCELERATION_LIMIT, int(set_A_l))
+            dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, i, self.ADDR_PRO_PROFILE_ACCELERATION, int(set_A_PRFL))
+            dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, i, self.ADDR_PRO_PROFILE_VELOCITY, int(set_V_PRFL))    
             if dxl_comm_result != COMM_SUCCESS:
                 print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
             elif dxl_error != 0:
@@ -189,10 +192,10 @@ class DynamixelMotors(Node):
             else:
                 print("Dynamixel: ",i," has been successfully velocity and acceleration configuration")
         for i in self.DXL_ID1:
-            dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, self.DXL1_ID, self.ADDR_PRO_VELOCITY_LIMIT, int(set_V_l))
-            dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, self.DXL1_ID, self.ADDR_PRO_ACCELERATION_LIMIT, int(set_A_l))
-            dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, self.DXL1_ID, self.ADDR_PRO_PROFILE_ACCELERATION, int(set_A_PRFL))
-            dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, self.DXL1_ID, self.ADDR_PRO_PROFILE_VELOCITY, int(set_V_PRFL))
+            dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, i, self.ADDR_PRO_VELOCITY_LIMIT, int(set_V_l))
+            dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, i, self.ADDR_PRO_ACCELERATION_LIMIT, int(set_A_l))
+            dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, i, self.ADDR_PRO_PROFILE_ACCELERATION, int(set_A_PRFL))
+            dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, i, self.ADDR_PRO_PROFILE_VELOCITY, int(set_V_PRFL))
             if dxl_comm_result != COMM_SUCCESS:
                 print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
             elif dxl_error != 0:
@@ -202,7 +205,7 @@ class DynamixelMotors(Node):
 
     def read_positions(self):
         # Read present position
-        joint_position=[0,0,0,0,0,0,0,0]
+        joint_position=[0,0,0,0,0,0,0,0,0]
         # Read Dynamixel#1 present position
         dxl1_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler0, 1, self.ADDR_PRO_PRESENT_POSITION)
         # Read Dynamixel#2 present position
@@ -294,22 +297,22 @@ class DynamixelMotors(Node):
         # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 7, self.ADDR_PRO_GOAL_POSITION, dxl7_goal_position)
         # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 8, self.ADDR_PRO_GOAL_POSITION, dxl8_goal_position)
 
-        self.current(self.DXL_ID0,self.portHandler0)
-        self.current(self.DXL_ID1,self.portHandler1)
+        # self.current(self.DXL_ID0,self.portHandler0)
+        # self.current(self.DXL_ID1,self.portHandler1)
 
     def callback(self, data: JointState):
         #esta configuracion es con lo siguiente mensaje joint1 front and backs y despues los dos
 
-        self.theta1 = data.position[0]*180/3.1416
-        self.theta2 = data.position[1]*180/3.1416
-        self.theta3 = data.position[2]*180/3.1416
-        self.theta4 = data.position[3]*180/3.1416
-        self.theta5 = data.position[4]*180/3.1416
-        self.theta6 = data.position[5]*180/3.1416
-        self.theta7 = data.position[6]*180/3.1416
-        self.theta8 = data.position[7]*180/3.1416
+        self.theta1 = data.position[1]*180/3.1416
+        self.theta2 = data.position[2]*180/3.1416
+        self.theta3 = data.position[3]*180/3.1416
+        self.theta4 = data.position[4]*180/3.1416
+        self.theta5 = data.position[5]*180/3.1416
+        self.theta6 = data.position[6]*180/3.1416
+        self.theta7 = data.position[7]*180/3.1416
+        self.theta8 = data.position[8]*180/3.1416
 
-        self.read_positions()
+        self.movement()
 
 
 
@@ -319,7 +322,7 @@ def main(args=None):
     rclpy.init(args=args)
     node = DynamixelMotors("dynamixel_node")
     node.comunication()
-    # node.torque(turn_on=True)
+    node.torque(turn_on=True)
 
     try:
         rclpy.spin(node)

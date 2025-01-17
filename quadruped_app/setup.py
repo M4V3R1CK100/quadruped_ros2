@@ -30,7 +30,9 @@ setup(
             'raw_to_bytes_node=quadruped_app.raw_to_bytes:main', 
             'real_camera_node=quadruped_app.real_camera:main', 
             'realsense_camera_node=quadruped_app.realsense_to_bytes:main',
-            'quadruped_visualizer_node=quadruped_app.quadruped_visualizer:main'            
+            'quadruped_visualizer_node=quadruped_app.quadruped_visualizer:main',          
+            'light_interface_node=quadruped_app.interface_light:main',
+
         ],
     },
 )

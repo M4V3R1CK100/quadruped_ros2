@@ -74,9 +74,9 @@ def interface(page: ft.Page, node: my_node):
         visual_density=ft.VisualDensity.COMFORTABLE,
         color_scheme=ft.ColorScheme(
             primary=ft.colors.BLUE,
-            secondary=ft.colors.WHITE54,
-            background=ft.colors.GREY_900,
-            surface=ft.colors.GREY_400
+            secondary=ft.colors.GREY_100,
+            background=ft.colors.WHITE,
+            surface=ft.colors.WHITE
         )
     )
 
@@ -93,8 +93,8 @@ def interface(page: ft.Page, node: my_node):
         content=ft.Text(value="Control del cuadrúpedo", size=28, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER), padding=50
     )
 
-    img_cam  = ft.Image(width=600, border_radius= 15)
-    img_mat  = ft.Image(width=600, border_radius= 15)
+    img_cam  = ft.Image(width=500, border_radius= 15)
+    img_mat  = ft.Image(width=500, border_radius= 15)
 
     # Función para actualizar la imagen en tiempo real
     def update_image_cam():
@@ -254,10 +254,10 @@ def interface(page: ft.Page, node: my_node):
             [
                 ft.Row(
                     [
-                        ft.Text(value = "Velocidad"    , size=24, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=200), 
-                        ft.Text(value = "Rotación"     , size=24, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=200),
-                        ft.Text(value = "Cámara"       , size=24, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=200),
-                        ft.Text(value = "Traslación"   , size=24, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=200),
+                        ft.Text(value = "Velocidad "    , size=30, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=200), 
+                        ft.Text(value = " Rotación "     , size=30, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=200),
+                        ft.Text(value = "  Cámara  "       , size=30, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=200),
+                        ft.Text(value = "Traslación"   , size=30, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=200),
                         
                     ], alignment=ft.MainAxisAlignment.SPACE_EVENLY
                 ),
@@ -287,7 +287,7 @@ def interface(page: ft.Page, node: my_node):
                                                 ft.IconButton(icon=ft.icons.ROTATE_LEFT , on_click=plus_click_angle , icon_size=60),
                                             ], alignment=ft.MainAxisAlignment.SPACE_EVENLY, 
                                         )
-                                    ),height=110,
+                                    ),
                                 )
                             ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, width=200
                         ), 
@@ -316,24 +316,24 @@ def interface(page: ft.Page, node: my_node):
                                         ft.Column(
                                             [
                                                 ft.IconButton(ft.icons.ARROW_UPWARD, on_click=plus_click_z_pos, icon_size=40),
-                                                ft.Container(content=ft.Text(value=""),width=40, height=40),
+                                                ft.Container(content=ft.Text(value="", size=15),width=40, height=40),
                                                 ft.IconButton(ft.icons.ARROW_DOWNWARD, on_click=minus_click_z_pos, icon_size=40),
                                             ]
                                         ),
                                         ft.IconButton(ft.icons.ARROW_FORWARD, on_click=plus_click_x_pos, icon_size=40),
-                                    ], alignment=ft.MainAxisAlignment.CENTER,
+                                    ], alignment=ft.MainAxisAlignment.CENTER, scale=0.7,
                                 ), 
                                 ft.Row(
                                     [
                                         txt_x_pos, txt_z_pos
                                     ], alignment=ft.MainAxisAlignment.CENTER
                                 )
-                            ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, width=200
+                            ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, width=200,alignment=ft.MainAxisAlignment.START
                         ),
-                    ], alignment=ft.MainAxisAlignment.SPACE_EVENLY
+                    ], alignment=ft.MainAxisAlignment.SPACE_EVENLY, vertical_alignment=ft.MainAxisAlignment.START
                 )     
-            ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.SPACE_EVENLY, spacing=200
-        ), padding=50, width=2000
+            ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.START
+        ), padding=10, 
     )
 
     video = ft.Row(
@@ -347,10 +347,10 @@ def interface(page: ft.Page, node: my_node):
             ), 
             ft.Column(
                 [
-                    ft.FloatingActionButton(icon=ft.icons.HOME_ROUNDED, on_click=home_position, bgcolor=ft.colors.BLUE, text="Posición Inicial", width=170),
-                    ft.FloatingActionButton(icon=ft.icons.POWER_SETTINGS_NEW_OUTLINED, on_click=rest_position, bgcolor=ft.colors.BLUE, text="Posición Reposo", width=170),
-                    ft.FloatingActionButton(icon=ft.icons.DANGEROUS_OUTLINED, on_click=stop_position, bgcolor=ft.colors.RED, text="Paro de Emergencia", width=170),
-                    ft.FloatingActionButton(icon=ft.icons.SEND, on_click=send_data, bgcolor=ft.colors.GREEN_700, text="Enviar Información", width=170),
+                    ft.FloatingActionButton(icon=ft.icons.HOME_ROUNDED, on_click=home_position, bgcolor=ft.colors.BLUE, text="Posición Inicial", width=170, scale=1.3, mini=100),
+                    ft.FloatingActionButton(icon=ft.icons.POWER_SETTINGS_NEW_OUTLINED, on_click=rest_position, bgcolor=ft.colors.BLUE, text="Posición Reposo", width=170, scale=1.3, mini=100),
+                    ft.FloatingActionButton(icon=ft.icons.DANGEROUS_OUTLINED, on_click=stop_position, bgcolor=ft.colors.RED, text="Paro de Emergencia", width=170, scale=1.3, mini=100),
+                    ft.FloatingActionButton(icon=ft.icons.SEND, on_click=send_data, bgcolor=ft.colors.GREEN_700, text="Enviar Información", width=170, scale=1.3, mini=100),
                 ], width=250, horizontal_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.SPACE_EVENLY, height=400
             ), 
             ft.Container(
@@ -365,7 +365,7 @@ def interface(page: ft.Page, node: my_node):
     page.add(
         ft.Column(
             [
-                title,
+                # title,
                 video, 
                 movement_control        
             ], spacing=100, horizontal_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.SPACE_AROUND, expand=True

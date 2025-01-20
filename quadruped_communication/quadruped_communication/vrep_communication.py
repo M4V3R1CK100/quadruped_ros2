@@ -89,7 +89,7 @@ class Vrep_Communication(Node):
             except Exception as e:
                 self.get_logger().error(f"Error al procesar la imagen: {e}")
 
-        self.create_timer(0.1, publish_image)
+        self.create_timer(0.05, publish_image)
 
 
 def main(args=None):

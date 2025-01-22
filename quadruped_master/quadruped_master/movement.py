@@ -110,7 +110,7 @@ def initial_position(node: MyNode):
     joint_position_state=[0.0, -1.0, 2.2, -1.0, 2.2, -1.0, 2.2, -1.0, 2.2]
     node.publish_joint_states(joint_position_state)
 
-    time.sleep(4)
+    time.sleep(8)
     joint_position_state=[0.0, stand_1, stand_2,stand_1,stand_2,stand_1,stand_2,stand_1,stand_2] # stand up principal
     node.publish_joint_states(joint_position_state)
 

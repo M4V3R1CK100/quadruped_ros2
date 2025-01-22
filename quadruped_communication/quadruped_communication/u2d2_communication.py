@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# With this program we read and write the Dynamixel Motores using SDK 
+# With this program we read and write the Dynamixel Motores using SDK
 import rclpy
 from rclpy.node import Node
 from dynamixel_sdk import *
@@ -40,8 +40,8 @@ class DynamixelMotors(Node):
         # Protocol version
         self.PROTOCOL_VERSION            = 2.0               # See which protocol version is used in the Dynamixel
         # Default setting
-        self.DXL_ID0                      = [1,2,5,6]                 # Dynamixel ID : 1
-        self.DXL_ID1                      = [3,4,7,8]
+        self.DXL_ID1                      = [0,1,2,5,6]                 # Dynamixel ID : 1
+        self.DXL_ID0                      = [3,4,7,8]
         self.DXL_ID                       = [1,2,3,4,5,6,7,8]
 
         # BAUDRATE                    = 1000000             # Dynamixel default baudrate : 57600
@@ -112,7 +112,7 @@ class DynamixelMotors(Node):
             if int(dxl_present_current) >= 32767:
                 if 65535-int(dxl_present_current) >= 50:
                     print("Motor ",i," is off",65535-int(dxl_present_current))
-                    self.packetHandler.write1ByteTxRx(portHandler, i, self.ADDR_PRO_TORQUE_ENABLE, 0) 
+                    self.packetHandler.write1ByteTxRx(portHandler, i, self.ADDR_PRO_TORQUE_ENABLE, 0)
             else:
                 if int(dxl_present_current) >= 50:
                     print("Motor ",i," is off",int(dxl_present_current))
@@ -147,22 +147,23 @@ class DynamixelMotors(Node):
             port_torque(self.portHandler0, self.DXL_ID0)
 
     def pid_gain_position_loop(self):
-        # set_P_Gain = 500   
-        # set_I_Gain = 100     
-        # set_D_Gain = 4700 
+        # set_P_Gain = 500
+        # set_I_Gain = 100
+        # set_D_Gain = 4700
         set_P_Gain = 2000
-        set_I_Gain = 10   
+        set_I_Gain = 10
         set_D_Gain = 10
         for i in self.DXL_ID0:
-            dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler0, i, self.ADDR_PRO_POSITION_P_GAIN, set_P_Gain)
-            dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler0, i, self.ADDR_PRO_POSITION_I_GAIN, set_I_Gain)
-            dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler0, i, self.ADDR_PRO_POSITION_D_GAIN, set_D_Gain)
-            if dxl_comm_result != COMM_SUCCESS:
-                print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
-            elif dxl_error != 0:
-                print("%s" % self.packetHandler.getRxPacketError(dxl_error))
-            else:
-                print("Dynamixel: ",i," has been successfully PID configuration")
+            if i!=0:
+                dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler0, i, self.ADDR_PRO_POSITION_P_GAIN, set_P_Gain)
+                dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler0, i, self.ADDR_PRO_POSITION_I_GAIN, set_I_Gain)
+                dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler0, i, self.ADDR_PRO_POSITION_D_GAIN, set_D_Gain)
+                if dxl_comm_result != COMM_SUCCESS:
+                    print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+                elif dxl_error != 0:
+                    print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+                else:
+                    print("Dynamixel: ",i," has been successfully PID configuration")
         for i in self.DXL_ID1:
             dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler1, i, self.ADDR_PRO_POSITION_P_GAIN, set_P_Gain)
             dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler1, i, self.ADDR_PRO_POSITION_I_GAIN, set_I_Gain)
@@ -184,7 +185,7 @@ class DynamixelMotors(Node):
             dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, i, self.ADDR_PRO_VELOCITY_LIMIT, int(set_V_l))
             dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, i, self.ADDR_PRO_ACCELERATION_LIMIT, int(set_A_l))
             dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, i, self.ADDR_PRO_PROFILE_ACCELERATION, int(set_A_PRFL))
-            dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, i, self.ADDR_PRO_PROFILE_VELOCITY, int(set_V_PRFL))    
+            dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, i, self.ADDR_PRO_PROFILE_VELOCITY, int(set_V_PRFL))
             if dxl_comm_result != COMM_SUCCESS:
                 print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
             elif dxl_error != 0:
@@ -241,12 +242,12 @@ class DynamixelMotors(Node):
         self.theta6 = (16380.0 + offset6 -dxl6_present_position)*(15.0/120.0)*(360.0/4095.0)
         self.theta7 = ((dxl7_present_position-offset7)*(15.0/120.0)*(360.0/4095.0))-90.0
         self.theta8 = ((dxl8_present_position-offset8)*(15.0/120.0)*(360.0/4095.0))-45.0
-        
+
         print("[1]%.2f\t[2]%.2f\t[3]%.2f\t[4]%.2f\t[5]%.2f\t[6]%.2f\t[7]%.2f\t[8]%.2f " % (dxl1_present_position,dxl2_present_position,dxl3_present_position,dxl4_present_position,dxl5_present_position,dxl6_present_position,dxl7_present_position,dxl8_present_position))
 
         print("[1]%.2f\t[2]%.2f\t[3]%.2f\t[4]%.2f\t[5]%.2f\t[6]%.2f\t[7]%.2f\t[8]%.2f " % (self.theta1,self.theta2,self.theta3,self.theta4,self.theta5,self.theta6,self.theta7,self.theta8))
-        
-        
+
+
         joint_position[0] = self.theta1*3.1415/180.0
         joint_position[1] = self.theta2*3.1415/180.0
         joint_position[2] = self.theta3*3.1415/180.0
@@ -257,45 +258,47 @@ class DynamixelMotors(Node):
         joint_position[7] = self.theta8*3.1415/180.0
 
         print(joint_position)
-        
+
         return joint_position
 
 
     def movement(self):
-        
+
         #1 degree ~ 90 /i did repair the motor 1 and we change for motor 1 and 7 position
         # offset1 = -410
         offset1 = 50
         offset2 = -80
-        offset3 = -300
-        offset4 = 10
+        offset3 = -300 + 120
+        offset4 = 10 - 320
         offset5 = 0
-        offset6 = -300
-        offset7 = 150
-        offset8 = -120    
+        offset6 = -200
+        offset7 = 150 - 150
+        offset8 = -120
 
-        print("[1]%.2f\t[2]%.2f\t[3]%.2f\t[4]%.2f\t[5]%.2f\t[6]%.2f\t[7]%.2f\t[8]%.2f " % (self.theta1,self.theta2,self.theta3,self.theta4,self.theta5,self.theta6,self.theta7,self.theta8))
+        # print("[1]%.2f\t[2]%.2f\t[3]%.2f\t[4]%.2f\t[5]%.2f\t[6]%.2f\t[7]%.2f\t[8]%.2f " % (self.theta1,self.theta2,self.theta3,self.theta4,self.theta5,self.theta6,self.theta7,self.theta8))
 
-        dxl1_goal_position = int(20475.0 + offset1-((self.theta1+90.0)/((15.0/120.0)*(360.0/4095.0))))
-        dxl2_goal_position = int(16380.0 + offset2-((self.theta2)/((15.0/120.0)*(360.0/4095.0))))
-        dxl3_goal_position = int(((self.theta3+90)/((15.0/120.0)*(360.0/4095.0)))+offset3)
+        dxl0_goal_position = int(self.theta0/(360.0/4095.0))
+        dxl1_goal_position = int(20475.0 - 4095*3 + offset1-((self.theta1+90.0)/((15.0/120.0)*(360.0/4095.0))))
+        dxl2_goal_position = int(16380.0 - 4095*4 + offset2-((self.theta2)/((15.0/120.0)*(360.0/4095.0))))
+        dxl3_goal_position = int(-4095 + ((self.theta3+90)/((15.0/120.0)*(360.0/4095.0)))+offset3)
         dxl4_goal_position = int(((self.theta4+45)/((15.0/120.0)*(360.0/4095.0)))+offset4)
-        dxl5_goal_position = int(20475.0 + offset5-((self.theta5+90.0)/((15.0/120.0)*(360.0/4095.0))))
-        dxl6_goal_position = int(16380.0 + offset6-((self.theta6)/((15.0/120.0)*(360.0/4095.0))))
-        dxl7_goal_position = int(((self.theta7+90)/((15.0/120.0)*(360.0/4095.0)))+offset7)
+        dxl5_goal_position = int(20475.0  - 4095*3 +  offset5-((self.theta5+90.0)/((15.0/120.0)*(360.0/4095.0))))
+        dxl6_goal_position = int(16380.0 - 4095*4 + offset6-((self.theta6)/((15.0/120.0)*(360.0/4095.0))))
+        dxl7_goal_position = int(-4095 + ((self.theta7+90)/((15.0/120.0)*(360.0/4095.0)))+offset7)
         dxl8_goal_position = int(((self.theta8+45)/((15.0/120.0)*(360.0/4095.0)))+offset8)
-        
-        print("[1]%.2f\t[2]%.2f\t[3]%.2f\t[4]%.2f\t[5]%.2f\t[6]%.2f\t[7]%.2f\t[8]%.2f " % (dxl1_goal_position,dxl2_goal_position,dxl3_goal_position,dxl4_goal_position,dxl5_goal_position,dxl6_goal_position,dxl7_goal_position,dxl8_goal_position))
-        print()
 
-        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, 1, self.ADDR_PRO_GOAL_POSITION, dxl1_goal_position)
-        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, 2, self.ADDR_PRO_GOAL_POSITION, dxl2_goal_position)
-        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 3, self.ADDR_PRO_GOAL_POSITION, dxl3_goal_position)
-        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 4, self.ADDR_PRO_GOAL_POSITION, dxl4_goal_position)
-        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, 5, self.ADDR_PRO_GOAL_POSITION, dxl5_goal_position)
-        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, 6, self.ADDR_PRO_GOAL_POSITION, dxl6_goal_position)
-        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 7, self.ADDR_PRO_GOAL_POSITION, dxl7_goal_position)
-        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 8, self.ADDR_PRO_GOAL_POSITION, dxl8_goal_position)
+        # print("[1]%.2f\t[2]%.2f\t[3]%.2f\t[4]%.2f\t[5]%.2f\t[6]%.2f\t[7]%.2f\t[8]%.2f " % (dxl1_goal_position,dxl2_goal_position,dxl3_goal_position,dxl4_goal_position,dxl5_goal_position,dxl6_goal_position,dxl7_goal_position,dxl8_goal_position))
+        print(self.theta0)
+
+        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 0, self.ADDR_PRO_GOAL_POSITION, dxl0_goal_position)
+        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 1, self.ADDR_PRO_GOAL_POSITION, dxl1_goal_position)
+        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 2, self.ADDR_PRO_GOAL_POSITION, dxl2_goal_position)
+        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, 3, self.ADDR_PRO_GOAL_POSITION, dxl3_goal_position)
+        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, 4, self.ADDR_PRO_GOAL_POSITION, dxl4_goal_position)
+        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 5, self.ADDR_PRO_GOAL_POSITION, dxl5_goal_position)
+        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 6, self.ADDR_PRO_GOAL_POSITION, dxl6_goal_position)
+        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, 7, self.ADDR_PRO_GOAL_POSITION, dxl7_goal_position)
+        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, 8, self.ADDR_PRO_GOAL_POSITION, dxl8_goal_position)
 
         # self.current(self.DXL_ID0,self.portHandler0)
         # self.current(self.DXL_ID1,self.portHandler1)
@@ -303,6 +306,7 @@ class DynamixelMotors(Node):
     def callback(self, data: JointState):
         #esta configuracion es con lo siguiente mensaje joint1 front and backs y despues los dos
 
+        self.theta0 = data.position[0]*180/3.1416 + 180
         self.theta1 = data.position[1]*180/3.1416
         self.theta2 = data.position[2]*180/3.1416
         self.theta3 = data.position[3]*180/3.1416
@@ -313,10 +317,11 @@ class DynamixelMotors(Node):
         self.theta8 = data.position[8]*180/3.1416
 
         self.movement()
+        self.get_logger().error(str(data._position))
 
 
 
-    
+
 def main(args=None):
 
     rclpy.init(args=args)
@@ -338,13 +343,12 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
-    
 
 
 
-    
-        
 
 
 
-    
+
+
+

@@ -84,8 +84,8 @@ def generate_launch_description():
         image_arg, #  argumentos
 
         movement_node,
-        dynamixel_communication_node,
-
+        # dynamixel_communication_node,
+        realsense_node,
         interface_node,
         quadruped_visualizer_node,
         raw_to_bytes_node,

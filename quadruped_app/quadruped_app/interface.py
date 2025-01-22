@@ -67,7 +67,7 @@ def interface(page: ft.Page, node: my_node):
     page.window.min_width   = 700
     page.window.min_height  = 700
 
-    page.window.full_screen = True
+    page.window.full_screen = False
 
     page. theme = ft. Theme(
         color_scheme_seed=ft.colors.BLUE,

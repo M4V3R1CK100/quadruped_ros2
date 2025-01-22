@@ -29,7 +29,7 @@ def generate_launch_description():
     else:
         model_path = models_path
 
-    world_path = os.path.join(pkg_share, 'worlds', 'world_test_wq.world')
+    world_path = os.path.join(pkg_share, 'worlds', 'task.world')
 
     # robot state publisher node
     node_robot_state_publisher = Node(

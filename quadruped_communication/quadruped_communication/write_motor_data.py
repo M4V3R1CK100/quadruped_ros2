@@ -3,34 +3,9 @@
 import os
 import numpy as np
 from rclpy.node import Node
-from rclpy import init, spin
-from archie_master.msg import MotorData
-
-# Globales para manejo de archivos
-ruta_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'motor_data')
-new_file = True
-number = 0
-
-
-def write_data(name: str, data: str):
-    """
-    Escribe datos en un archivo con nombre único, basado en el número de archivo.
-    """
-    global new_file, number
-    while True:
-        file_path = os.path.join(ruta_file, f"{number}_motor_{name}.txt")
-        if os.path.exists(file_path):
-            if new_file:
-                number += 1
-            else:
-                with open(file_path, "a") as archivo:
-                    archivo.write(data)
-                break
-        else:
-            with open(file_path, "w") as archivo:
-                archivo.write(data)
-            new_file = False
-            break
+import rclpy
+from quadruped_interfaces.msg import MotorData
+from ament_index_python.packages import get_package_share_directory
 
 
 class MotorDataWriter(Node):
@@ -46,22 +21,51 @@ class MotorDataWriter(Node):
 
         self.get_logger().warn("The write_motor_data_node has been started")
 
+        self.package_name = 'quadruped_communication'
+
+        self.ruta_file = os.path.join(get_package_share_directory(self.package_name), 'motor_data')
+        print(self.ruta_file)
+        self.new_file = True
+        self.number = 0
+
+
     def save_data(self, motor: MotorData):
         """
         Callback para guardar los datos recibidos en los archivos correspondientes.
         """
-        write_data("goal_position", ",".join(map(str, motor.goal_position)) + "\n")
-        write_data("pres_position", ",".join(map(str, motor.pres_position)) + "\n")
+        self.write_data("goal_position", ",".join(map(str, motor.goal_position)) + "\n")
+        self.write_data("pres_position", ",".join(map(str, motor.pres_position)) + "\n")
+
+    def write_data(self, name: str, data: str):
+        """
+        Escribe datos en un archivo con nombre único, basado en el número de archivo.
+        """
+        while True:
+            file_path = os.path.join(self.ruta_file, f"{self.number}_{name}.txt")
+            if os.path.exists(file_path):
+                if self.new_file:
+                    self.number += 1
+                else:
+                    with open(file_path, "a") as archivo:
+                        archivo.write(data)
+                    break
+            else:
+                os.makedirs(self.ruta_file, exist_ok=True)
+                with open(file_path, "w") as archivo:
+                    archivo.write(data)
+                self.new_file = False
+                break
+
 
 
 def main(args=None):
     """
     Función principal para inicializar el nodo y mantenerlo en ejecución.
     """
-    init(args=args)
+    rclpy.init(args=args)
     node = MotorDataWriter()
     try:
-        spin(node)
+        rclpy.spin(node)
     except KeyboardInterrupt:
         node.get_logger().info("Shutting down write_motor_data_node")
     finally:

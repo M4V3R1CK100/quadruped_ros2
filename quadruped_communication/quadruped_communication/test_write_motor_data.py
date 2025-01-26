@@ -3,35 +3,14 @@
 import os
 import numpy as np
 from rclpy.node import Node
-from rclpy import init, spin
-from archie_master.msg import MotorData
+import rclpy
+from quadruped_interfaces.msg import MotorData
 from sensor_msgs.msg import JointState
 
 # Globales para manejo de archivos
 ruta_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'motor_data')
 new_file = True
 number = 0
-
-
-def write_data(name: str, data: str):
-    """
-    Escribe datos en un archivo con nombre único, basado en el número de archivo.
-    """
-    global new_file, number
-    while True:
-        file_path = os.path.join(ruta_file, f"{number}_motor_{name}.txt")
-        if os.path.exists(file_path):
-            if new_file:
-                number += 1
-            else:
-                with open(file_path, "a") as archivo:
-                    archivo.write(data)
-                break
-        else:
-            with open(file_path, "w") as archivo:
-                archivo.write(data)
-            new_file = False
-            break
 
 
 class MotorDataWriter(Node):
@@ -48,12 +27,12 @@ class MotorDataWriter(Node):
         self.get_logger().warn("The test_write_motor_data_node has been started")
 
         self.create_timer(0.1, self.update_data)
-        self.motor_position_converted = [0,0,0,0,0,0,0,0,0]
-        self.present_pos = [0,0,0,0,0,0,0,0,0]
+        self.motor_position_converted = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]
+        self.present_pos = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]
         self.motors = MotorData()
 
     def update_data(self):
-        for i in self.present_pos:
+        for i in range(len(self.present_pos)):
             self.present_pos[i]+=0.1
 
         self.motors.goal_position = self.present_pos
@@ -78,10 +57,10 @@ def main(args=None):
     """
     Función principal para inicializar el nodo y mantenerlo en ejecución.
     """
-    init(args=args)
+    rclpy.init(args=args)
     node = MotorDataWriter()
     try:
-        spin(node)
+        rclpy.spin(node)
     except KeyboardInterrupt:
         node.get_logger().info("Shutting down write_motor_data_node")
     finally:

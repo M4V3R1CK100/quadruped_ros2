@@ -10,12 +10,14 @@ import os
 
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Header
+from quadruped_interfaces.msg import MotorData
 
 class DynamixelMotors(Node):
     def __init__(self, name):
         super().__init__(name)
         self.get_logger().info(f"{name} creado")
-        self.joint_subscription = self.create_subscription(JointState, '/joint_goals', self.callback, 10)
+        self.joint_subscription   = self.create_subscription(JointState, '/joint_goals', self.callback, 10)
+        self.publisher_motor_data = self.create_publisher   (MotorData,  '/motor_data' , 10)
         # Control table address
         #READ AND WRITE
         self.ADDR_PRO_ACCELERATION_LIMIT = 40
@@ -42,7 +44,7 @@ class DynamixelMotors(Node):
         # Default setting
         self.DXL_ID1                      = [0,1,2,5,6]                 # Dynamixel ID : 1
         self.DXL_ID0                      = [3,4,7,8]
-        self.DXL_ID                       = [1,2,3,4,5,6,7,8]
+        self.DXL_ID                       = [0,1,2,3,4,5,6,7,8]
 
         # BAUDRATE                    = 1000000             # Dynamixel default baudrate : 57600
         self.BAUDRATE                    = 57600
@@ -53,9 +55,14 @@ class DynamixelMotors(Node):
         # Initialize PortHandler instance
         # Set the port path
         # Get methods and members of PortHandlerLinux or PortHandlerWindows
-        self.portHandler0 = PortHandler(self.DEVICENAME0)
-        self.portHandler1 = PortHandler(self.DEVICENAME1)
+        self.portHandler0  = PortHandler(self.DEVICENAME0)
+        self.portHandler1  = PortHandler(self.DEVICENAME1)
         self.packetHandler = PacketHandler(self.PROTOCOL_VERSION)
+
+        self.groupSyncReadPos0 = GroupSyncRead(self.portHandler0, self.packetHandler, self.ADDR_PRO_PRESENT_POSITION, 4)
+        self.groupSyncReadPos1 = GroupSyncRead(self.portHandler1, self.packetHandler, self.ADDR_PRO_PRESENT_POSITION, 4)
+
+
 
         self.theta0=0
         self.theta1=0
@@ -67,7 +74,9 @@ class DynamixelMotors(Node):
         self.theta7=0
         self.theta8=0
 
-        # self.create_timer(1, self.read_positions)
+        self.motors = MotorData()
+
+        self.create_timer(0.1, self.read_positions)
 
     def comunication(self, n: int = 2):
         """
@@ -76,7 +85,7 @@ class DynamixelMotors(Node):
         Args:
             n (int): Indica los puertos a los que se aplicará el cambio (0, 1, o 2 para ambos).
         """
-        def setup_port(portHandler: PortHandler, dxl_ids: list):
+        def setup_port(portHandler: PortHandler, dxl_ids: list, groupSyncReadPos: GroupSyncRead):
             if portHandler.openPort():
                 self.get_logger().info("Succeeded to open the port HOLA")
             else:
@@ -96,14 +105,19 @@ class DynamixelMotors(Node):
                 else:
                     self.get_logger().info(f"Dynamixel {i} has been successfully connected")
 
-        if n == 2:
-            setup_port(self.portHandler0, self.DXL_ID0)
-            setup_port(self.portHandler1, self.DXL_ID1)
-        elif n == 1:
-            setup_port(self.portHandler1, self.DXL_ID1)
-        else:
-            setup_port(self.portHandler0, self.DXL_ID0)
+            for id in dxl_ids:
+                # Add parameter storage for Dynamixel present position value
+                dxl_addparam_resultPos = groupSyncReadPos.addParam(id)
+                if dxl_addparam_resultPos != True:
+                    print("[ID:%03d] groupSyncReadPos addparam failed" % id)
 
+        if n == 2:
+            setup_port(self.portHandler0, self.DXL_ID0, self.groupSyncReadPos0)
+            setup_port(self.portHandler1, self.DXL_ID1, self.groupSyncReadPos1)
+        elif n == 1:
+            setup_port(self.portHandler1, self.DXL_ID1, self.groupSyncReadPos1)
+        else:
+            setup_port(self.portHandler0, self.DXL_ID0, self.groupSyncReadPos0)
 
     def current(self, DXL_ID,portHandler):
         # print("current:")
@@ -204,63 +218,80 @@ class DynamixelMotors(Node):
             else:
                 print("Dynamixel: ",i," has been successfully velocity and acceleration configuration")
 
-    def read_positions(self):
-        # Read present position
-        joint_position=[0,0,0,0,0,0,0,0,0]
-        # Read Dynamixel#1 present position
-        dxl1_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler0, 1, self.ADDR_PRO_PRESENT_POSITION)
-        # Read Dynamixel#2 present position
-        dxl2_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler0, 2, self.ADDR_PRO_PRESENT_POSITION)
-        # Read Dynamixel#3 present position
-        dxl3_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler1, 3, self.ADDR_PRO_PRESENT_POSITION)
-        # Read Dynamixel#4 present position
-        dxl4_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler1, 4, self.ADDR_PRO_PRESENT_POSITION)
-        # Read Dynamixel#5 present position
-        dxl5_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler0, 5, self.ADDR_PRO_PRESENT_POSITION)
-        # Read Dynamixel#6 present position
-        dxl6_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler0, 6, self.ADDR_PRO_PRESENT_POSITION)
-        # Read Dynamixel#7 present position
-        dxl7_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler1, 7, self.ADDR_PRO_PRESENT_POSITION)
-        # Read Dynamixel#8 present position
-        dxl8_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler1, 8, self.ADDR_PRO_PRESENT_POSITION)
-
+    def convert_motor_to_pos(self, motor_positions: list):
         #1 degree ~ 90
         offset1 = 50
-        offset2 = 0
-        offset3 = 0
-        offset4 = 10
+        offset2 = -80
+        offset3 = -300 + 120
+        offset4 = 10 - 320
         offset5 = 0
-        offset6 = -300
-        offset7 = 150
+        offset6 = -200
+        offset7 = 150 - 150
         offset8 = -120
 
-        self.theta1 = (20475.0 + offset1 -dxl1_present_position)*(15.0/120.0)*(360.0/4095.0)-90.0
-        self.theta2 = (16380.0 + offset2 -dxl2_present_position)*(15.0/120.0)*(360.0/4095.0)
-        self.theta3 = ((dxl3_present_position-offset3)*(15.0/120.0)*(360.0/4095.0))-90.0
-        self.theta4 = ((dxl4_present_position-offset4)*(15.0/120.0)*(360.0/4095.0))-45.0
-        self.theta5 = (20475.0 + offset5 -dxl5_present_position)*(15.0/120.0)*(360.0/4095.0)-90.0
-        self.theta6 = (16380.0 + offset6 -dxl6_present_position)*(15.0/120.0)*(360.0/4095.0)
-        self.theta7 = ((dxl7_present_position-offset7)*(15.0/120.0)*(360.0/4095.0))-90.0
-        self.theta8 = ((dxl8_present_position-offset8)*(15.0/120.0)*(360.0/4095.0))-45.0
+        motor_positions_converted = [0,0,0,0,0,0,0,0,0]
+        motor_positions_converted[0] = motor_positions[0] * (360.0 / 4095.0)
+        motor_positions_converted[1] = (((20475.0 - 4095*3 + offset1) - motor_positions[1]) * (15.0 / 120.0) * (360.0 / 4095.0)) - 90.0
+        motor_positions_converted[2] = (((16380.0 - 4095*4 + offset2) - motor_positions[2]) * (15.0 / 120.0) * (360.0 / 4095.0))
+        motor_positions_converted[3] = (((motor_positions[3] - offset3 + 4095) * (15.0 / 120.0) * (360.0 / 4095.0))) - 90.0
+        motor_positions_converted[4] = ((motor_positions[4] - offset4) * (15.0 / 120.0) * (360.0 / 4095.0)) - 45.0
+        motor_positions_converted[5] = (((20475.0 - 4095*3 + offset5) - motor_positions[5]) * (15.0 / 120.0) * (360.0 / 4095.0)) - 90.0
+        motor_positions_converted[6] = (((16380.0 - 4095*4 + offset6) - motor_positions[6]) * (15.0 / 120.0) * (360.0 / 4095.0))
+        motor_positions_converted[7] = (((motor_positions[7] - offset7 + 4095) * (15.0 / 120.0) * (360.0 / 4095.0))) - 90.0
+        motor_positions_converted[8] = ((motor_positions[8] - offset8) * (15.0 / 120.0) * (360.0 / 4095.0)) - 45.0
 
-        print("[1]%.2f\t[2]%.2f\t[3]%.2f\t[4]%.2f\t[5]%.2f\t[6]%.2f\t[7]%.2f\t[8]%.2f " % (dxl1_present_position,dxl2_present_position,dxl3_present_position,dxl4_present_position,dxl5_present_position,dxl6_present_position,dxl7_present_position,dxl8_present_position))
+        return motor_positions_converted
 
-        print("[1]%.2f\t[2]%.2f\t[3]%.2f\t[4]%.2f\t[5]%.2f\t[6]%.2f\t[7]%.2f\t[8]%.2f " % (self.theta1,self.theta2,self.theta3,self.theta4,self.theta5,self.theta6,self.theta7,self.theta8))
+    def read_positions(self):
+        # Read Dynamixel present positions
+        dxl0_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler1, 0, self.ADDR_PRO_PRESENT_POSITION)
+        dxl1_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler1, 1, self.ADDR_PRO_PRESENT_POSITION)
+        dxl2_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler1, 2, self.ADDR_PRO_PRESENT_POSITION)
+        dxl3_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler0, 3, self.ADDR_PRO_PRESENT_POSITION)
+        dxl4_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler0, 4, self.ADDR_PRO_PRESENT_POSITION)
+        dxl5_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler1, 5, self.ADDR_PRO_PRESENT_POSITION)
+        dxl6_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler1, 6, self.ADDR_PRO_PRESENT_POSITION)
+        dxl7_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler0, 7, self.ADDR_PRO_PRESENT_POSITION)
+        dxl8_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler0, 8, self.ADDR_PRO_PRESENT_POSITION)
 
+        motor_position_converted = self.convert_motor_to_pos([dxl0_present_position, dxl1_present_position, dxl2_present_position, dxl3_present_position, dxl4_present_position, dxl5_present_position, dxl6_present_position, dxl7_present_position, dxl8_present_position])
 
-        joint_position[0] = self.theta1*3.1415/180.0
-        joint_position[1] = self.theta2*3.1415/180.0
-        joint_position[2] = self.theta3*3.1415/180.0
-        joint_position[3] = self.theta4*3.1415/180.0
-        joint_position[4] = self.theta5*3.1415/180.0
-        joint_position[5] = self.theta6*3.1415/180.0
-        joint_position[6] = self.theta7*3.1415/180.0
-        joint_position[7] = self.theta8*3.1415/180.0
+        motors = MotorData()
+        motors.goal_position = [self.theta0, self.theta1, self.theta2, self.theta3, self.theta4, self.theta5, self.theta6, self.theta7, self.theta8]
+        motors.pres_position = [motor_position_converted[0], motor_position_converted[1], motor_position_converted[2], motor_position_converted[3], motor_position_converted[4], motor_position_converted[5], motor_position_converted[6], motor_position_converted[7], motor_position_converted[8]]
+        self.publisher_motor_data.publish(motors)
 
-        print(joint_position)
+    def read_positions_sync(self):
+        present_positions = [0,0,0,0,0,0,0,0,0]
+        # Syncread present position
+        dxl_comm_result = self.groupSyncReadPos0.txRxPacket()
+        if dxl_comm_result != COMM_SUCCESS:
+            print("Falla en get_positions: %s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+        
+        for id in self.DXL_ID0:
+            # Check if groupsyncread data of Dynamixel#1 is available
+            dxl_getdata_result = self.groupSyncReadPos0.isAvailable(id, self.ADDR_PRO_PRESENT_POSITION , 4)
+            if dxl_getdata_result != True:
+                print("[ID:%03d] groupSyncReadPos getdata failed" % id)
+            # Get Dynamixel present position value
+            dxl_present_position = self.groupSyncReadPos0.getData(id, self.ADDR_PRO_PRESENT_POSITION , 4)
+            present_positions[id]=dxl_present_position
 
-        return joint_position
+        for id in self.DXL_ID1:
+            # Check if groupsyncread data of Dynamixel#1 is available
+            dxl_getdata_result = self.groupSyncReadPos1.isAvailable(id, self.ADDR_PRO_PRESENT_POSITION , 4)
+            if dxl_getdata_result != True:
+                print("[ID:%03d] groupSyncReadPos getdata failed" % id)
+            # Get Dynamixel present position value
+            dxl_present_position = self.groupSyncReadPos1.getData(id, self.ADDR_PRO_PRESENT_POSITION , 4)
+            present_positions[id]=dxl_present_position
 
+        motor_position_converted = self.convert_motor_to_pos(present_positions)
+
+        
+        self.motors.goal_position = [self.theta0, self.theta1, self.theta2, self.theta3, self.theta4, self.theta5, self.theta6, self.theta7, self.theta8]
+        self.motors.pres_position = [motor_position_converted[0], motor_position_converted[1], motor_position_converted[2], motor_position_converted[3], motor_position_converted[4], motor_position_converted[5], motor_position_converted[6], motor_position_converted[7], motor_position_converted[8]]
+        self.publisher_motor_data.publish(self.motors)
 
     def movement(self):
 
@@ -320,8 +351,6 @@ class DynamixelMotors(Node):
         self.get_logger().error(str(data._position))
 
 
-
-
 def main(args=None):
 
     rclpy.init(args=args)
@@ -337,8 +366,6 @@ def main(args=None):
     node.destroy_node()
 
     rclpy.shutdown()
-
-
 
 
 if __name__ == '__main__':

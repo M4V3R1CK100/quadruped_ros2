@@ -5,7 +5,6 @@ import numpy as np
 from rclpy.node import Node
 import rclpy
 from quadruped_interfaces.msg import MotorData
-from ament_index_python.packages import get_package_share_directory
 
 
 class MotorDataWriter(Node):
@@ -21,9 +20,7 @@ class MotorDataWriter(Node):
 
         self.get_logger().warn("The write_motor_data_node has been started")
 
-        self.package_name = 'quadruped_communication'
-
-        self.ruta_file = os.path.join(get_package_share_directory(self.package_name), 'motor_data')
+        self.ruta_file = os.path.join(os.getcwd(), 'src', 'quadruped_ros2' , 'motor_data')
         print(self.ruta_file)
         self.new_file = True
         self.number = 0

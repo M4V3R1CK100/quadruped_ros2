@@ -47,7 +47,7 @@ class DynamixelMotors(Node):
         self.DXL_ID                       = [0,1,2,3,4,5,6,7,8]
 
         # BAUDRATE                    = 1000000             # Dynamixel default baudrate : 57600
-        self.BAUDRATE                    = 57600
+        self.BAUDRATE                    = 1000000
 
         self.DEVICENAME0                 = '/dev/ttyUSB0'    # Check which port is being used on your controller
         self.DEVICENAME1                 = '/dev/ttyUSB1'    # ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
@@ -64,19 +64,21 @@ class DynamixelMotors(Node):
 
 
 
-        self.theta0=0
-        self.theta1=0
-        self.theta2=0
-        self.theta3=0
-        self.theta4=0
-        self.theta5=0
-        self.theta6=0
-        self.theta7=0
-        self.theta8=0
+        self.theta0=float(0)
+        self.theta1=float(0)
+        self.theta2=float(0)
+        self.theta3=float(0)
+        self.theta4=float(0)
+        self.theta5=float(0)
+        self.theta6=float(0)
+        self.theta7=float(0)
+        self.theta8=float(0)
 
         self.motors = MotorData()
 
-        self.create_timer(0.1, self.read_positions)
+        self.read = False
+
+        self.ros_timer = self.create_timer(0.1, self.cond_read_positions)
 
     def comunication(self, n: int = 2):
         """
@@ -153,8 +155,8 @@ class DynamixelMotors(Node):
                     self.get_logger().warn(f"Torque of Motor {i} is {state}")
 
         if n == 2:
-            port_torque(self.portHandler0, self.DXL_ID0)
             port_torque(self.portHandler1, self.DXL_ID1)
+            port_torque(self.portHandler0, self.DXL_ID0)
         elif n == 1:
             port_torque(self.portHandler1, self.DXL_ID1)
         else:
@@ -230,7 +232,7 @@ class DynamixelMotors(Node):
         offset8 = -120
 
         motor_positions_converted = [0,0,0,0,0,0,0,0,0]
-        motor_positions_converted[0] = motor_positions[0] * (360.0 / 4095.0)
+        motor_positions_converted[0] = motor_positions[0] * (360.0 / 4095.0) - 180
         motor_positions_converted[1] = (((20475.0 - 4095*3 + offset1) - motor_positions[1]) * (15.0 / 120.0) * (360.0 / 4095.0)) - 90.0
         motor_positions_converted[2] = (((16380.0 - 4095*4 + offset2) - motor_positions[2]) * (15.0 / 120.0) * (360.0 / 4095.0))
         motor_positions_converted[3] = (((motor_positions[3] - offset3 + 4095) * (15.0 / 120.0) * (360.0 / 4095.0))) - 90.0
@@ -240,7 +242,36 @@ class DynamixelMotors(Node):
         motor_positions_converted[7] = (((motor_positions[7] - offset7 + 4095) * (15.0 / 120.0) * (360.0 / 4095.0))) - 90.0
         motor_positions_converted[8] = ((motor_positions[8] - offset8) * (15.0 / 120.0) * (360.0 / 4095.0)) - 45.0
 
+        motor_positions_converted[1] = (motor_positions_converted[1] if motor_positions_converted[1] > -180.0 else
+                                       (motor_positions_converted[1] + 47197442.25))
+
+        motor_positions_converted[2] = (motor_positions_converted[2] if motor_positions_converted[2] > -180.0 else
+                                       (motor_positions_converted[2] + 47197444.0))
+        
+        motor_positions_converted[3] = (motor_positions_converted[3] if motor_positions_converted[3] < 180.0 else
+                                       (motor_positions_converted[3] - 47197399.75 - 43.02))
+
+        motor_positions_converted[4] = (motor_positions_converted[4] if motor_positions_converted[4] < 180.0 else
+                                       (motor_positions_converted[4] - 47197401.2 - 41.5))
+        
+        motor_positions_converted[5] = (motor_positions_converted[5] if motor_positions_converted[5] > -180.0 else
+                                       (motor_positions_converted[5] + 47197442.80))
+        
+        motor_positions_converted[6] = (motor_positions_converted[6] if motor_positions_converted[6] > -180.0 else
+                                       (motor_positions_converted[6] + 47197445.0))
+        
+        motor_positions_converted[7] = (motor_positions_converted[7] if motor_positions_converted[7] < 180.0 else
+                                       (motor_positions_converted[7] - 47197397.80 - 45.0))
+        
+        motor_positions_converted[8] = (motor_positions_converted[8] if motor_positions_converted[8] < 180.0 else
+                                       (motor_positions_converted[8] - 47197399.1 - 43.7))
+
+
         return motor_positions_converted
+
+    def cond_read_positions(self):
+        if self.read == True:
+            self.read_positions_sync()
 
     def read_positions(self):
         # Read Dynamixel present positions
@@ -260,11 +291,16 @@ class DynamixelMotors(Node):
         motors.goal_position = [self.theta0, self.theta1, self.theta2, self.theta3, self.theta4, self.theta5, self.theta6, self.theta7, self.theta8]
         motors.pres_position = [motor_position_converted[0], motor_position_converted[1], motor_position_converted[2], motor_position_converted[3], motor_position_converted[4], motor_position_converted[5], motor_position_converted[6], motor_position_converted[7], motor_position_converted[8]]
         self.publisher_motor_data.publish(motors)
+        # self.get_logger().error(str(self.motors))
 
     def read_positions_sync(self):
         present_positions = [0,0,0,0,0,0,0,0,0]
         # Syncread present position
         dxl_comm_result = self.groupSyncReadPos0.txRxPacket()
+        if dxl_comm_result != COMM_SUCCESS:
+            print("Falla en get_positions: %s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+        
+        dxl_comm_result = self.groupSyncReadPos1.txRxPacket()
         if dxl_comm_result != COMM_SUCCESS:
             print("Falla en get_positions: %s" % self.packetHandler.getTxRxResult(dxl_comm_result))
         
@@ -289,9 +325,10 @@ class DynamixelMotors(Node):
         motor_position_converted = self.convert_motor_to_pos(present_positions)
 
         
-        self.motors.goal_position = [self.theta0, self.theta1, self.theta2, self.theta3, self.theta4, self.theta5, self.theta6, self.theta7, self.theta8]
-        self.motors.pres_position = [motor_position_converted[0], motor_position_converted[1], motor_position_converted[2], motor_position_converted[3], motor_position_converted[4], motor_position_converted[5], motor_position_converted[6], motor_position_converted[7], motor_position_converted[8]]
+        self.motors.goal_position = [self.theta0 - 180, self.theta1, self.theta2, self.theta3, self.theta4, self.theta5, self.theta6, self.theta7, self.theta8]
+        self.motors.pres_position = motor_position_converted
         self.publisher_motor_data.publish(self.motors)
+        # self.get_logger().error(str(self.motors))
 
     def movement(self):
 
@@ -306,8 +343,6 @@ class DynamixelMotors(Node):
         offset7 = 150 - 150
         offset8 = -120
 
-        # print("[1]%.2f\t[2]%.2f\t[3]%.2f\t[4]%.2f\t[5]%.2f\t[6]%.2f\t[7]%.2f\t[8]%.2f " % (self.theta1,self.theta2,self.theta3,self.theta4,self.theta5,self.theta6,self.theta7,self.theta8))
-
         dxl0_goal_position = int(self.theta0/(360.0/4095.0))
         dxl1_goal_position = int(20475.0 - 4095*3 + offset1-((self.theta1+90.0)/((15.0/120.0)*(360.0/4095.0))))
         dxl2_goal_position = int(16380.0 - 4095*4 + offset2-((self.theta2)/((15.0/120.0)*(360.0/4095.0))))
@@ -318,19 +353,19 @@ class DynamixelMotors(Node):
         dxl7_goal_position = int(-4095 + ((self.theta7+90)/((15.0/120.0)*(360.0/4095.0)))+offset7)
         dxl8_goal_position = int(((self.theta8+45)/((15.0/120.0)*(360.0/4095.0)))+offset8)
 
-        # print("[1]%.2f\t[2]%.2f\t[3]%.2f\t[4]%.2f\t[5]%.2f\t[6]%.2f\t[7]%.2f\t[8]%.2f " % (dxl1_goal_position,dxl2_goal_position,dxl3_goal_position,dxl4_goal_position,dxl5_goal_position,dxl6_goal_position,dxl7_goal_position,dxl8_goal_position))
-        print(self.theta0)
+        self.read = False
 
-        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 0, self.ADDR_PRO_GOAL_POSITION, dxl0_goal_position)
-        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 1, self.ADDR_PRO_GOAL_POSITION, dxl1_goal_position)
-        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 2, self.ADDR_PRO_GOAL_POSITION, dxl2_goal_position)
-        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, 3, self.ADDR_PRO_GOAL_POSITION, dxl3_goal_position)
-        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, 4, self.ADDR_PRO_GOAL_POSITION, dxl4_goal_position)
-        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 5, self.ADDR_PRO_GOAL_POSITION, dxl5_goal_position)
-        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 6, self.ADDR_PRO_GOAL_POSITION, dxl6_goal_position)
-        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, 7, self.ADDR_PRO_GOAL_POSITION, dxl7_goal_position)
-        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, 8, self.ADDR_PRO_GOAL_POSITION, dxl8_goal_position)
+        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 0, self.ADDR_PRO_GOAL_POSITION, dxl0_goal_position)
+        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 1, self.ADDR_PRO_GOAL_POSITION, dxl1_goal_position)
+        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 2, self.ADDR_PRO_GOAL_POSITION, dxl2_goal_position)
+        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, 3, self.ADDR_PRO_GOAL_POSITION, dxl3_goal_position)
+        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, 4, self.ADDR_PRO_GOAL_POSITION, dxl4_goal_position)
+        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 5, self.ADDR_PRO_GOAL_POSITION, dxl5_goal_position)
+        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler1, 6, self.ADDR_PRO_GOAL_POSITION, dxl6_goal_position)
+        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, 7, self.ADDR_PRO_GOAL_POSITION, dxl7_goal_position)
+        # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, 8, self.ADDR_PRO_GOAL_POSITION, dxl8_goal_position)
 
+        self.read = True
         # self.current(self.DXL_ID0,self.portHandler0)
         # self.current(self.DXL_ID1,self.portHandler1)
 
@@ -356,11 +391,13 @@ def main(args=None):
     rclpy.init(args=args)
     node = DynamixelMotors("dynamixel_node")
     node.comunication()
-    node.torque(turn_on=True)
+    # node.torque(turn_on=True)
+    node.read = True
 
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
+        print(node.destroy_timer(node.ros_timer))
         node.torque(turn_on=False)
 
     node.destroy_node()

@@ -22,7 +22,9 @@ setup(
         'console_scripts': [
             'dynamixel_communication=quadruped_communication.u2d2_communication:main',
             'vrep_communication= quadruped_communication.vrep_communication:main', 
-
+            'test_write=quadruped_communication.test_write_motor_data:main',
+            'write_motor_data=quadruped_communication.write_motor_data:main',
+            
         ],
     },
 )

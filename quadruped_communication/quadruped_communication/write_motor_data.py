@@ -30,6 +30,7 @@ class MotorDataWriter(Node):
         """
         Callback para guardar los datos recibidos en los archivos correspondientes.
         """
+
         self.write_data("goal_position", ",".join(map(str, motor.goal_position)) + "\n")
         self.write_data("pres_position", ",".join(map(str, motor.pres_position)) + "\n")
 
@@ -67,7 +68,7 @@ def main(args=None):
         node.get_logger().info("Shutting down write_motor_data_node")
     finally:
         node.destroy_node()
-        rclpy.shutdown()
+        # rclpy.shutdown()
 
 
 if __name__ == "__main__":

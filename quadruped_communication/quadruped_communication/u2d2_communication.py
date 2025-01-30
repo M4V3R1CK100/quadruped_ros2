@@ -59,8 +59,10 @@ class DynamixelMotors(Node):
         self.portHandler1  = PortHandler(self.DEVICENAME1)
         self.packetHandler = PacketHandler(self.PROTOCOL_VERSION)
 
-        self.groupSyncReadPos0 = GroupSyncRead(self.portHandler0, self.packetHandler, self.ADDR_PRO_PRESENT_POSITION, 4)
-        self.groupSyncReadPos1 = GroupSyncRead(self.portHandler1, self.packetHandler, self.ADDR_PRO_PRESENT_POSITION, 4)
+        self.groupSyncReadPos0  = GroupSyncRead (self.portHandler0, self.packetHandler, self.ADDR_PRO_PRESENT_POSITION, 4)
+        self.groupSyncReadPos1  = GroupSyncRead (self.portHandler1, self.packetHandler, self.ADDR_PRO_PRESENT_POSITION, 4)
+        self.groupSyncWritePos0 = GroupSyncWrite(self.portHandler0, self.packetHandler, self.ADDR_PRO_PRESENT_POSITION, 4)
+        self.groupSyncWritePos1 = GroupSyncWrite(self.portHandler1, self.packetHandler, self.ADDR_PRO_PRESENT_POSITION, 4)
 
 
 
@@ -232,7 +234,7 @@ class DynamixelMotors(Node):
         offset8 = -120
 
         motor_positions_converted = [0,0,0,0,0,0,0,0,0]
-        motor_positions_converted[0] = motor_positions[0] * (360.0 / 4095.0) - 180
+        motor_positions_converted[0] = motor_positions[0] * (360.0 / 4095.0)
         motor_positions_converted[1] = (((20475.0 - 4095*3 + offset1) - motor_positions[1]) * (15.0 / 120.0) * (360.0 / 4095.0)) - 90.0
         motor_positions_converted[2] = (((16380.0 - 4095*4 + offset2) - motor_positions[2]) * (15.0 / 120.0) * (360.0 / 4095.0))
         motor_positions_converted[3] = (((motor_positions[3] - offset3 + 4095) * (15.0 / 120.0) * (360.0 / 4095.0))) - 90.0
@@ -343,7 +345,7 @@ class DynamixelMotors(Node):
         offset7 = 150 - 150
         offset8 = -120
 
-        dxl0_goal_position = int(self.theta0/(360.0/4095.0))
+        dxl0_goal_position = int((self.theta0+180)/(360.0/4095.0))
         dxl1_goal_position = int(20475.0 - 4095*3 + offset1-((self.theta1+90.0)/((15.0/120.0)*(360.0/4095.0))))
         dxl2_goal_position = int(16380.0 - 4095*4 + offset2-((self.theta2)/((15.0/120.0)*(360.0/4095.0))))
         dxl3_goal_position = int(-4095 + ((self.theta3+90)/((15.0/120.0)*(360.0/4095.0)))+offset3)
@@ -366,13 +368,68 @@ class DynamixelMotors(Node):
         # dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler0, 8, self.ADDR_PRO_GOAL_POSITION, dxl8_goal_position)
 
         self.read = True
-        # self.current(self.DXL_ID0,self.portHandler0)
-        # self.current(self.DXL_ID1,self.portHandler1)
+
+    def movement_sync(self):
+
+        offset1 = 50
+        offset2 = -80
+        offset3 = -300 + 120
+        offset4 = 10 - 320
+        offset5 = 0
+        offset6 = -200
+        offset7 = 150 - 150
+        offset8 = -120
+
+        dxl0_goal_position = int((self.theta0+180)/(360.0/4095.0))
+        dxl1_goal_position = int(20475.0 - 4095*3 + offset1-((self.theta1+90.0)/((15.0/120.0)*(360.0/4095.0))))
+        dxl2_goal_position = int(16380.0 - 4095*4 + offset2-((self.theta2)/((15.0/120.0)*(360.0/4095.0))))
+        dxl3_goal_position = int(-4095 + ((self.theta3+90)/((15.0/120.0)*(360.0/4095.0)))+offset3)
+        dxl4_goal_position = int(((self.theta4+45)/((15.0/120.0)*(360.0/4095.0)))+offset4)
+        dxl5_goal_position = int(20475.0  - 4095*3 +  offset5-((self.theta5+90.0)/((15.0/120.0)*(360.0/4095.0))))
+        dxl6_goal_position = int(16380.0 - 4095*4 + offset6-((self.theta6)/((15.0/120.0)*(360.0/4095.0))))
+        dxl7_goal_position = int(-4095 + ((self.theta7+90)/((15.0/120.0)*(360.0/4095.0)))+offset7)
+        dxl8_goal_position = int(((self.theta8+45)/((15.0/120.0)*(360.0/4095.0)))+offset8)
+
+        self.read = False
+
+        param_goal_pwm0 = [DXL_LOBYTE(DXL_LOWORD(dxl0_goal_position)), DXL_HIBYTE(DXL_LOWORD(dxl0_goal_position)), DXL_LOBYTE(DXL_HIWORD(dxl0_goal_position)), DXL_HIBYTE(DXL_HIWORD(dxl0_goal_position))]
+        param_goal_pwm1 = [DXL_LOBYTE(DXL_LOWORD(dxl1_goal_position)), DXL_HIBYTE(DXL_LOWORD(dxl1_goal_position)), DXL_LOBYTE(DXL_HIWORD(dxl1_goal_position)), DXL_HIBYTE(DXL_HIWORD(dxl1_goal_position))]
+        param_goal_pwm2 = [DXL_LOBYTE(DXL_LOWORD(dxl2_goal_position)), DXL_HIBYTE(DXL_LOWORD(dxl2_goal_position)), DXL_LOBYTE(DXL_HIWORD(dxl2_goal_position)), DXL_HIBYTE(DXL_HIWORD(dxl2_goal_position))]
+        param_goal_pwm3 = [DXL_LOBYTE(DXL_LOWORD(dxl3_goal_position)), DXL_HIBYTE(DXL_LOWORD(dxl3_goal_position)), DXL_LOBYTE(DXL_HIWORD(dxl3_goal_position)), DXL_HIBYTE(DXL_HIWORD(dxl3_goal_position))]
+        param_goal_pwm4 = [DXL_LOBYTE(DXL_LOWORD(dxl4_goal_position)), DXL_HIBYTE(DXL_LOWORD(dxl4_goal_position)), DXL_LOBYTE(DXL_HIWORD(dxl4_goal_position)), DXL_HIBYTE(DXL_HIWORD(dxl4_goal_position))]
+        param_goal_pwm5 = [DXL_LOBYTE(DXL_LOWORD(dxl5_goal_position)), DXL_HIBYTE(DXL_LOWORD(dxl5_goal_position)), DXL_LOBYTE(DXL_HIWORD(dxl5_goal_position)), DXL_HIBYTE(DXL_HIWORD(dxl5_goal_position))]
+        param_goal_pwm6 = [DXL_LOBYTE(DXL_LOWORD(dxl6_goal_position)), DXL_HIBYTE(DXL_LOWORD(dxl6_goal_position)), DXL_LOBYTE(DXL_HIWORD(dxl6_goal_position)), DXL_HIBYTE(DXL_HIWORD(dxl6_goal_position))]
+        param_goal_pwm7 = [DXL_LOBYTE(DXL_LOWORD(dxl7_goal_position)), DXL_HIBYTE(DXL_LOWORD(dxl7_goal_position)), DXL_LOBYTE(DXL_HIWORD(dxl7_goal_position)), DXL_HIBYTE(DXL_HIWORD(dxl7_goal_position))]
+        param_goal_pwm8 = [DXL_LOBYTE(DXL_LOWORD(dxl8_goal_position)), DXL_HIBYTE(DXL_LOWORD(dxl8_goal_position)), DXL_LOBYTE(DXL_HIWORD(dxl8_goal_position)), DXL_HIBYTE(DXL_HIWORD(dxl8_goal_position))]
+        
+        dxl_addparam_result = self.groupSyncWritePWM1.addParam(0, param_goal_pwm0)
+        dxl_addparam_result = self.groupSyncWritePWM1.addParam(1, param_goal_pwm1)
+        dxl_addparam_result = self.groupSyncWritePWM1.addParam(2, param_goal_pwm2)
+        dxl_addparam_result = self.groupSyncWritePWM0.addParam(3, param_goal_pwm3)
+        dxl_addparam_result = self.groupSyncWritePWM0.addParam(4, param_goal_pwm4)
+        dxl_addparam_result = self.groupSyncWritePWM1.addParam(5, param_goal_pwm5)
+        dxl_addparam_result = self.groupSyncWritePWM1.addParam(6, param_goal_pwm6)
+        dxl_addparam_result = self.groupSyncWritePWM0.addParam(7, param_goal_pwm7)
+        dxl_addparam_result = self.groupSyncWritePWM0.addParam(8, param_goal_pwm8)
+        
+
+        dxl_comm_result = self.groupSyncWritePWM0.txPacket()
+        if dxl_comm_result != COMM_SUCCESS:
+            print("Hubo un fallo en envío de posición en u2d2_0")
+        self.groupSyncWritePWM0.clearParam()
+
+        dxl_comm_result = self.groupSyncWritePWM1.txPacket()
+        if dxl_comm_result != COMM_SUCCESS:
+            print("Hubo un fallo en envío de posición en u2d2_1")
+        self.groupSyncWritePWM1.clearParam()
+
+        self.read = True
+
 
     def callback(self, data: JointState):
         #esta configuracion es con lo siguiente mensaje joint1 front and backs y despues los dos
 
-        self.theta0 = data.position[0]*180/3.1416 + 180
+        self.theta0 = data.position[0]*180/3.1416
         self.theta1 = data.position[1]*180/3.1416
         self.theta2 = data.position[2]*180/3.1416
         self.theta3 = data.position[3]*180/3.1416

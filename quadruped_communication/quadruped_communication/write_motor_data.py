@@ -31,6 +31,7 @@ class MotorDataWriter(Node):
         Callback para guardar los datos recibidos en los archivos correspondientes.
         """
 
+        print(motor)
         self.write_data("goal_position", ",".join(map(str, motor.goal_position)) + "\n")
         self.write_data("pres_position", ",".join(map(str, motor.pres_position)) + "\n")
 
@@ -48,6 +49,7 @@ class MotorDataWriter(Node):
                         archivo.write(data)
                     break
             else:
+                self.get_logger().error("Nuevo archivo creado: " + f"{self.number}_{name}.txt")
                 os.makedirs(self.ruta_file, exist_ok=True)
                 with open(file_path, "w") as archivo:
                     archivo.write(data)

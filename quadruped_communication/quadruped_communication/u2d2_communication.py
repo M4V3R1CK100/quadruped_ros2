@@ -80,7 +80,7 @@ class DynamixelMotors(Node):
 
         self.read = False
 
-        # self.ros_timer = self.create_timer(0.1, self.cond_read_positions)
+        self.ros_timer = self.create_timer(0.1, self.cond_read_positions)
 
     def comunication(self, n: int = 2):
         """
@@ -234,7 +234,7 @@ class DynamixelMotors(Node):
         offset8 = -120
 
         motor_positions_converted = [0,0,0,0,0,0,0,0,0]
-        motor_positions_converted[0] = motor_positions[0] * (360.0 / 4095.0)
+        motor_positions_converted[0] = (motor_positions[0] * (360.0 / 4095.0)) - 180
         motor_positions_converted[1] = (((20475.0 - 4095*3 + offset1) - motor_positions[1]) * (15.0 / 120.0) * (360.0 / 4095.0)) - 90.0
         motor_positions_converted[2] = (((16380.0 - 4095*4 + offset2) - motor_positions[2]) * (15.0 / 120.0) * (360.0 / 4095.0))
         motor_positions_converted[3] = (((motor_positions[3] - offset3 + 4095) * (15.0 / 120.0) * (360.0 / 4095.0))) - 90.0
@@ -327,7 +327,7 @@ class DynamixelMotors(Node):
         motor_position_converted = self.convert_motor_to_pos(present_positions)
 
         
-        self.motors.goal_position = [self.theta0 - 180, self.theta1, self.theta2, self.theta3, self.theta4, self.theta5, self.theta6, self.theta7, self.theta8]
+        self.motors.goal_position = [self.theta0, self.theta1, self.theta2, self.theta3, self.theta4, self.theta5, self.theta6, self.theta7, self.theta8]
         self.motors.pres_position = motor_position_converted
         self.publisher_motor_data.publish(self.motors)
         # self.get_logger().error(str(self.motors))
@@ -369,6 +369,11 @@ class DynamixelMotors(Node):
 
         self.read = True
 
+    def convert_hex(self, pos):
+        if pos < 0:
+            pos = (1 << 16) + pos
+        return pos
+
     def movement_sync(self):
 
         offset1 = 50
@@ -392,39 +397,40 @@ class DynamixelMotors(Node):
 
         self.read = False
 
-        param_goal_pwm0 = [DXL_LOBYTE(DXL_LOWORD(dxl0_goal_position)), DXL_HIBYTE(DXL_LOWORD(dxl0_goal_position)), DXL_LOBYTE(DXL_HIWORD(dxl0_goal_position)), DXL_HIBYTE(DXL_HIWORD(dxl0_goal_position))]
-        param_goal_pwm1 = [DXL_LOBYTE(DXL_LOWORD(dxl1_goal_position)), DXL_HIBYTE(DXL_LOWORD(dxl1_goal_position)), DXL_LOBYTE(DXL_HIWORD(dxl1_goal_position)), DXL_HIBYTE(DXL_HIWORD(dxl1_goal_position))]
-        param_goal_pwm2 = [DXL_LOBYTE(DXL_LOWORD(dxl2_goal_position)), DXL_HIBYTE(DXL_LOWORD(dxl2_goal_position)), DXL_LOBYTE(DXL_HIWORD(dxl2_goal_position)), DXL_HIBYTE(DXL_HIWORD(dxl2_goal_position))]
-        param_goal_pwm3 = [DXL_LOBYTE(DXL_LOWORD(dxl3_goal_position)), DXL_HIBYTE(DXL_LOWORD(dxl3_goal_position)), DXL_LOBYTE(DXL_HIWORD(dxl3_goal_position)), DXL_HIBYTE(DXL_HIWORD(dxl3_goal_position))]
-        param_goal_pwm4 = [DXL_LOBYTE(DXL_LOWORD(dxl4_goal_position)), DXL_HIBYTE(DXL_LOWORD(dxl4_goal_position)), DXL_LOBYTE(DXL_HIWORD(dxl4_goal_position)), DXL_HIBYTE(DXL_HIWORD(dxl4_goal_position))]
-        param_goal_pwm5 = [DXL_LOBYTE(DXL_LOWORD(dxl5_goal_position)), DXL_HIBYTE(DXL_LOWORD(dxl5_goal_position)), DXL_LOBYTE(DXL_HIWORD(dxl5_goal_position)), DXL_HIBYTE(DXL_HIWORD(dxl5_goal_position))]
-        param_goal_pwm6 = [DXL_LOBYTE(DXL_LOWORD(dxl6_goal_position)), DXL_HIBYTE(DXL_LOWORD(dxl6_goal_position)), DXL_LOBYTE(DXL_HIWORD(dxl6_goal_position)), DXL_HIBYTE(DXL_HIWORD(dxl6_goal_position))]
-        param_goal_pwm7 = [DXL_LOBYTE(DXL_LOWORD(dxl7_goal_position)), DXL_HIBYTE(DXL_LOWORD(dxl7_goal_position)), DXL_LOBYTE(DXL_HIWORD(dxl7_goal_position)), DXL_HIBYTE(DXL_HIWORD(dxl7_goal_position))]
-        param_goal_pwm8 = [DXL_LOBYTE(DXL_LOWORD(dxl8_goal_position)), DXL_HIBYTE(DXL_LOWORD(dxl8_goal_position)), DXL_LOBYTE(DXL_HIWORD(dxl8_goal_position)), DXL_HIBYTE(DXL_HIWORD(dxl8_goal_position))]
-        
-        dxl_addparam_result = self.groupSyncWritePWM1.addParam(0, param_goal_pwm0)
-        dxl_addparam_result = self.groupSyncWritePWM1.addParam(1, param_goal_pwm1)
-        dxl_addparam_result = self.groupSyncWritePWM1.addParam(2, param_goal_pwm2)
-        dxl_addparam_result = self.groupSyncWritePWM0.addParam(3, param_goal_pwm3)
-        dxl_addparam_result = self.groupSyncWritePWM0.addParam(4, param_goal_pwm4)
-        dxl_addparam_result = self.groupSyncWritePWM1.addParam(5, param_goal_pwm5)
-        dxl_addparam_result = self.groupSyncWritePWM1.addParam(6, param_goal_pwm6)
-        dxl_addparam_result = self.groupSyncWritePWM0.addParam(7, param_goal_pwm7)
-        dxl_addparam_result = self.groupSyncWritePWM0.addParam(8, param_goal_pwm8)
+        param_goal_pos0 = [DXL_LOBYTE(DXL_LOWORD((dxl0_goal_position))), DXL_HIBYTE(DXL_LOWORD((dxl0_goal_position))), DXL_LOBYTE(DXL_HIWORD((dxl0_goal_position))), DXL_HIBYTE(DXL_HIWORD((dxl0_goal_position)))]
+        param_goal_pos1 = [DXL_LOBYTE(DXL_LOWORD((dxl1_goal_position))), DXL_HIBYTE(DXL_LOWORD((dxl1_goal_position))), DXL_LOBYTE(DXL_HIWORD((dxl1_goal_position))), DXL_HIBYTE(DXL_HIWORD((dxl1_goal_position)))]
+        param_goal_pos2 = [DXL_LOBYTE(DXL_LOWORD((dxl2_goal_position))), DXL_HIBYTE(DXL_LOWORD((dxl2_goal_position))), DXL_LOBYTE(DXL_HIWORD((dxl2_goal_position))), DXL_HIBYTE(DXL_HIWORD((dxl2_goal_position)))]
+        param_goal_pos3 = [DXL_LOBYTE(DXL_LOWORD((dxl3_goal_position))), DXL_HIBYTE(DXL_LOWORD((dxl3_goal_position))), DXL_LOBYTE(DXL_HIWORD((dxl3_goal_position))), DXL_HIBYTE(DXL_HIWORD((dxl3_goal_position)))]
+        param_goal_pos4 = [DXL_LOBYTE(DXL_LOWORD((dxl4_goal_position))), DXL_HIBYTE(DXL_LOWORD((dxl4_goal_position))), DXL_LOBYTE(DXL_HIWORD((dxl4_goal_position))), DXL_HIBYTE(DXL_HIWORD((dxl4_goal_position)))]
+        param_goal_pos5 = [DXL_LOBYTE(DXL_LOWORD((dxl5_goal_position))), DXL_HIBYTE(DXL_LOWORD((dxl5_goal_position))), DXL_LOBYTE(DXL_HIWORD((dxl5_goal_position))), DXL_HIBYTE(DXL_HIWORD((dxl5_goal_position)))]
+        param_goal_pos6 = [DXL_LOBYTE(DXL_LOWORD((dxl6_goal_position))), DXL_HIBYTE(DXL_LOWORD((dxl6_goal_position))), DXL_LOBYTE(DXL_HIWORD((dxl6_goal_position))), DXL_HIBYTE(DXL_HIWORD((dxl6_goal_position)))]
+        param_goal_pos7 = [DXL_LOBYTE(DXL_LOWORD((dxl7_goal_position))), DXL_HIBYTE(DXL_LOWORD((dxl7_goal_position))), DXL_LOBYTE(DXL_HIWORD((dxl7_goal_position))), DXL_HIBYTE(DXL_HIWORD((dxl7_goal_position)))]
+        param_goal_pos8 = [DXL_LOBYTE(DXL_LOWORD((dxl8_goal_position))), DXL_HIBYTE(DXL_LOWORD((dxl8_goal_position))), DXL_LOBYTE(DXL_HIWORD((dxl8_goal_position))), DXL_HIBYTE(DXL_HIWORD((dxl8_goal_position)))]
+
+        dxl_addparam_result = self.groupSyncWritePos0.addParam(0, param_goal_pos0)
+        if dxl_addparam_result != COMM_SUCCESS:
+            print("Hubo un fallo en addParam")
+        # dxl_addparam_result = self.groupSyncWritePos1.addParam(1, param_goal_pwm1)
+        # dxl_addparam_result = self.groupSyncWritePos1.addParam(2, param_goal_pwm2)
+        # dxl_addparam_result = self.groupSyncWritePos0.addParam(3, param_goal_pwm3)
+        # dxl_addparam_result = self.groupSyncWritePos0.addParam(4, param_goal_pwm4)
+        # dxl_addparam_result = self.groupSyncWritePos1.addParam(5, param_goal_pwm5)
+        # dxl_addparam_result = self.groupSyncWritePos1.addParam(6, param_goal_pwm6)
+        # dxl_addparam_result = self.groupSyncWritePos0.addParam(7, param_goal_pwm7)
+        # dxl_addparam_result = self.groupSyncWritePos0.addParam(8, param_goal_pwm8)
         
 
-        dxl_comm_result = self.groupSyncWritePWM0.txPacket()
+        dxl_comm_result = self.groupSyncWritePos0.txPacket()
         if dxl_comm_result != COMM_SUCCESS:
             print("Hubo un fallo en envío de posición en u2d2_0")
-        self.groupSyncWritePWM0.clearParam()
+        self.groupSyncWritePos0.clearParam()
 
-        dxl_comm_result = self.groupSyncWritePWM1.txPacket()
-        if dxl_comm_result != COMM_SUCCESS:
-            print("Hubo un fallo en envío de posición en u2d2_1")
-        self.groupSyncWritePWM1.clearParam()
+        # dxl_comm_result = self.groupSyncWritePos1.txPacket()
+        # if dxl_comm_result != COMM_SUCCESS:
+        #     print("Hubo un fallo en envío de posición en u2d2_1")
+        # self.groupSyncWritePos1.clearParam()
 
         self.read = True
-
 
     def callback(self, data: JointState):
         #esta configuracion es con lo siguiente mensaje joint1 front and backs y despues los dos
@@ -454,7 +460,7 @@ def main(args=None):
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
-        # print(node.destroy_timer(node.ros_timer))
+        print(node.destroy_timer(node.ros_timer))
         node.torque(turn_on=False)
 
     node.destroy_node()

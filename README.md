@@ -1,7 +1,6 @@
 # Sistema de Control de Movimiento para Robot Cuadrúpedo (ROS2 Humble)
 
-![Quadruped Robot](https://via.placeholder.com/800x400.png?text=Imagen+del+Robot+Cuadrúpedo+Real+y+Simulación)  
-*(Reemplaza esta imagen con una captura de tu robot en simulación y en la vida real)*
+![Quadruped Robot](figures/Cuadrupedo.png)  
 
 ## Descripción del Proyecto
 
@@ -108,6 +107,8 @@ rosdep install --from-paths src --ignore-src -r -y
    ```
 
 ---
+![Gazebo Simulationt](figures/gazebo.png)  
+
 
 ### Simulación en V-REP
 
@@ -120,6 +121,8 @@ rosdep install --from-paths src --ignore-src -r -y
    ```bash
    ros2 launch quadruped_master vrep_movement.launch.py
    ```
+
+![Vrep Simulationt](figures/vrep.png)  
 
 ---
 
@@ -135,6 +138,7 @@ rosdep install --from-paths src --ignore-src -r -y
    ros2 launch quadruped_master real_movement.launch.py
    ```
 
+![Stand Movement](figures/STAND_REAL.png)  
 ---
 
 ### Control
@@ -154,6 +158,5 @@ El robot puede controlarse de dos maneras:
 
 Aquí puedes ver un video de la caminata del robot y las simulaciones:  
 [Video de Demostración]  
-*(Reemplaza el enlace y la imagen con tu video de demostración)*
 
 ---

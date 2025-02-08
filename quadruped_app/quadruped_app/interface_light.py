@@ -74,7 +74,7 @@ def interface(page: ft.Page, node: my_node):
         visual_density=ft.VisualDensity.COMFORTABLE,
         color_scheme=ft.ColorScheme(
             primary=ft.colors.BLUE,
-            secondary=ft.colors.GREY_100,
+            secondary=ft.colors.WHITE,
             background=ft.colors.WHITE,
             surface=ft.colors.WHITE
         )
@@ -90,7 +90,7 @@ def interface(page: ft.Page, node: my_node):
     motion = 0.0
 
     title        = ft.Container(
-        content=ft.Text(value="Control del cuadrúpedo", size=28, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER), padding=50
+        content=ft.Text(value="Quadruped Control", size=28, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER), padding=50
     )
 
     img_cam  = ft.Image(width=500, border_radius= 15)
@@ -254,10 +254,10 @@ def interface(page: ft.Page, node: my_node):
             [
                 ft.Row(
                     [
-                        ft.Text(value = "Velocidad "    , size=30, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=200), 
-                        ft.Text(value = " Rotación "     , size=30, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=200),
-                        ft.Text(value = "  Cámara  "       , size=30, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=200),
-                        ft.Text(value = "Traslación"   , size=30, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=200),
+                        ft.Text(value = "Gait Velocity"    , size=30, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=200), 
+                        ft.Text(value = "  Rotation  "     , size=30, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=200),
+                        ft.Text(value = "   Camera   "       , size=30, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=200),
+                        ft.Text(value = " Traslation "   , size=30, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, width=200),
                         
                     ], alignment=ft.MainAxisAlignment.SPACE_EVENLY
                 ),
@@ -347,10 +347,10 @@ def interface(page: ft.Page, node: my_node):
             ), 
             ft.Column(
                 [
-                    ft.FloatingActionButton(icon=ft.icons.HOME_ROUNDED, on_click=home_position, bgcolor=ft.colors.BLUE, text="Posición Inicial", width=170, scale=1.3, mini=100),
-                    ft.FloatingActionButton(icon=ft.icons.POWER_SETTINGS_NEW_OUTLINED, on_click=rest_position, bgcolor=ft.colors.BLUE, text="Posición Reposo", width=170, scale=1.3, mini=100),
-                    ft.FloatingActionButton(icon=ft.icons.DANGEROUS_OUTLINED, on_click=stop_position, bgcolor=ft.colors.RED, text="Paro de Emergencia", width=170, scale=1.3, mini=100),
-                    ft.FloatingActionButton(icon=ft.icons.SEND, on_click=send_data, bgcolor=ft.colors.GREEN_700, text="Enviar Información", width=170, scale=1.3, mini=100),
+                    ft.FloatingActionButton(icon=ft.icons.HOME_ROUNDED, on_click=home_position, bgcolor=ft.colors.BLUE, text="Home Position", width=170, scale=1.3, mini=100),
+                    ft.FloatingActionButton(icon=ft.icons.POWER_SETTINGS_NEW_OUTLINED, on_click=rest_position, bgcolor=ft.colors.BLUE, text="Rest Position", width=170, scale=1.3, mini=100),
+                    ft.FloatingActionButton(icon=ft.icons.DANGEROUS_OUTLINED, on_click=stop_position, bgcolor=ft.colors.RED, text="Stop", width=170, scale=1.3, mini=100),
+                    ft.FloatingActionButton(icon=ft.icons.SEND, on_click=send_data, bgcolor=ft.colors.GREEN_700, text="Send Data", width=170, scale=1.3, mini=100),
                 ], width=250, horizontal_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.MainAxisAlignment.SPACE_EVENLY, height=400
             ), 
             ft.Container(
